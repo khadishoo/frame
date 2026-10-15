@@ -1,0 +1,5 @@
+{
+  "watch": ["src", "knexfile.js", ".env"],
+  "ext": "js,json",
+  "ignore": ["src/db/migrations", "src/db/seeds"]
+}
