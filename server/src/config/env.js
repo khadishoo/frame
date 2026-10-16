@@ -13,7 +13,7 @@ const envSchema = z.object({
   DATABASE_URL: z
     .string({ error: 'не задан' })
     .regex(/^postgres(ql)?:\/\//, 'должен начинаться с postgres:// или postgresql://'),
-  CLIENT_URL: z.url({ error: 'должен быть URL, например http://localhost:5173' }),
+  CLIENT_URL: z.url({ error: 'должен быть URL, например http://localhost:5180' }),
 });
 
 const parsed = envSchema.safeParse(process.env);

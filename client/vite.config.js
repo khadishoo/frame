@@ -9,7 +9,7 @@ export default defineConfig({
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
   server: {
-    port: 5173,
+    port: 5180, // 5173 часто занят другими Vite-проектами
     strictPort: true,
     // Запросы /api/* в dev уходят на Express — браузер видит один origin, CORS не нужен
     proxy: {

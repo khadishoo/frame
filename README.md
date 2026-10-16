@@ -18,18 +18,19 @@
 # 1. База данных
 psql -U postgres -c "CREATE DATABASE frame_dev ENCODING 'UTF8' TEMPLATE template0;"
 
-# 2. Сервер (http://localhost:4000)
-cd server
-npm install
-Copy-Item .env.example .env   # затем впишите пароль PostgreSQL в DATABASE_URL
-npm run migrate
-npm run dev
+# 2. Зависимости (корень, server, client) и переменные окружения
+npm run install:all
+Copy-Item server/.env.example server/.env   # затем впишите пароль PostgreSQL в DATABASE_URL
+npm run migrate --prefix server
 
-# 3. Клиент (http://localhost:5173) — в отдельном терминале
-cd client
-npm install
+# 3. Запуск сервера и клиента одной командой (из корня)
 npm run dev
 ```
+
+- Клиент: http://localhost:5180 (порт закреплён, `strictPort`)
+- API: http://localhost:4000/api/v1/health
+
+В логах строки сервера помечены `[API]`, клиента — `[WEB]`. Остановить оба — `Ctrl+C`.
 
 ## Структура
 
