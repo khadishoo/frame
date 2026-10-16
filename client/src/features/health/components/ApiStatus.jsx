@@ -1,55 +1,44 @@
+import { RotateCw } from 'lucide-react';
+import { cn } from '@/lib/cn';
 import { getErrorMessage } from '@/lib/getErrorMessage';
 import { useHealth } from '../hooks/useHealth';
 
-const Dot = ({ className }) => (
-  <span className={`inline-block h-2.5 w-2.5 rounded-full ${className}`} aria-hidden="true" />
-);
-
+/** Статус соединения клиент → API → БД (GET /api/v1/health). */
 export default function ApiStatus() {
   const { data, error, isPending, isFetching, refetch } = useHealth();
 
-  let content;
-  if (isPending) {
-    content = (
-      <>
-        <Dot className="animate-pulse bg-zinc-400" />
-        <span>Проверяю соединение…</span>
-      </>
-    );
-  } else if (error) {
-    content = (
-      <>
-        <Dot className="bg-red-500" />
-        <span className="text-red-600 dark:text-red-400">Ошибка: {getErrorMessage(error)}</span>
-      </>
-    );
-  } else {
-    content = (
-      <>
-        <Dot className="bg-emerald-500" />
-        <span>
-          API: {data.status} / DB: {data.db}
-        </span>
-      </>
-    );
+  let dot = 'bg-muted motion-safe:animate-pulse';
+  let text = 'Проверяю соединение…';
+  if (error) {
+    dot = 'bg-danger';
+    text = `Ошибка: ${getErrorMessage(error)}`;
+  } else if (!isPending) {
+    dot = 'bg-success';
+    text = `API: ${data.status} / DB: ${data.db}`;
   }
 
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className="flex items-center gap-1">
       <div
         role="status"
         aria-live="polite"
-        className="flex items-center gap-2 rounded-xl border border-zinc-200 px-4 py-2 font-mono text-sm dark:border-zinc-800"
+        className={cn(
+          'flex h-8 items-center gap-2 rounded-full border border-border bg-surface px-3 font-mono text-xs',
+          error ? 'text-danger' : 'text-fg',
+        )}
       >
-        {content}
+        <span className={cn('size-2 rounded-full', dot)} aria-hidden="true" />
+        {text}
       </div>
       <button
         type="button"
         onClick={() => refetch()}
         disabled={isFetching}
-        className="text-sm text-zinc-500 underline-offset-4 hover:underline disabled:opacity-50 dark:text-zinc-400"
+        aria-label="Проверить соединение снова"
+        title="Проверить снова"
+        className="focus-ring rounded-full p-2 text-muted transition-colors hover:text-fg disabled:opacity-50"
       >
-        {isFetching ? 'Проверяю…' : 'Проверить снова'}
+        <RotateCw className={cn('size-3.5', isFetching && 'animate-spin')} aria-hidden="true" />
       </button>
     </div>
   );

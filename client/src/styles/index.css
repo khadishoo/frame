@@ -2,16 +2,132 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Дизайн-токены (PLAN.md, часть 6). Значения — RGB-тройки без rgb(),
+ * чтобы Tailwind мог подставлять прозрачность: bg-accent/10.
+ */
 @layer base {
-  html {
+  :root {
     color-scheme: light;
+
+    /* «Чистый холст»: тёплый белый фон, белые поверхности, чернильный акцент */
+    --bg: 250 250 248;
+    --surface: 255 255 255;
+    --surface-2: 243 243 240;
+    --border: 228 228 223;
+    --text: 24 24 27;
+    --text-muted: 107 107 115;
+    --accent: 24 24 27;
+    --accent-fg: 250 250 248;
+    --ring: 99 102 241;
+    --danger: 220 38 38;
+    --success: 21 128 61;
+    --warning: 180 83 9;
+    --overlay: 24 24 27;
+
+    /* Цвета творческих типов */
+    --type-art: 244 99 79; /* коралловый */
+    --type-music: 139 92 246; /* фиолетовый */
+    --type-video: 59 130 246; /* синий */
+    --type-photo: 245 158 11; /* янтарный */
+    --type-script: 34 160 94; /* зелёный */
+    --type-dev: 20 170 155; /* бирюзовый */
+    --type-other: 120 120 130; /* графитовый */
+
+    --shadow: 24 24 27;
   }
 
-  html.dark {
+  .dark {
     color-scheme: dark;
+
+    --bg: 11 11 13;
+    --surface: 19 19 22;
+    --surface-2: 28 28 32;
+    --border: 41 41 47;
+    --text: 237 237 240;
+    --text-muted: 155 155 165;
+    --accent: 237 237 240;
+    --accent-fg: 11 11 13;
+    --ring: 129 140 248;
+    --danger: 248 113 113;
+    --success: 74 222 128;
+    --warning: 251 191 36;
+    --overlay: 0 0 0;
+
+    --type-art: 251 128 110;
+    --type-music: 167 139 250;
+    --type-video: 96 165 250;
+    --type-photo: 251 191 36;
+    --type-script: 74 222 128;
+    --type-dev: 45 212 191;
+    --type-other: 161 161 170;
+
+    --shadow: 0 0 0;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
-    @apply bg-white text-zinc-900 antialiased transition-colors dark:bg-zinc-950 dark:text-zinc-100;
+    @apply bg-bg font-sans text-base text-fg antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display tracking-tight;
+  }
+
+  ::selection {
+    background: rgb(var(--ring) / 0.25);
+  }
+
+  /* Плавная смена темы, но без анимации при первой загрузке и для reduced-motion */
+  @media (prefers-reduced-motion: no-preference) {
+    html.theme-transition,
+    html.theme-transition *,
+    html.theme-transition *::before,
+    html.theme-transition *::after {
+      transition:
+        background-color 200ms ease,
+        border-color 200ms ease,
+        color 200ms ease !important;
+    }
+  }
+}
+
+@layer components {
+  /* Единое кольцо фокуса для интерактивных элементов */
+  .focus-ring {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg;
+  }
+
+  /* Лёгкая зернистая текстура «бумаги» — лендинг и пустые состояния */
+  .bg-grain {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .bg-grain::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .dark .bg-grain::before {
+    opacity: 0.08;
+  }
+}
+
+@layer utilities {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
