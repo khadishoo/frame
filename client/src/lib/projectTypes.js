@@ -1,7 +1,7 @@
 import { Brush, Camera, Clapperboard, CodeXml, Feather, Music, Shapes } from 'lucide-react';
 
 /**
- * Творческие типы проектов (PLAN.md 1.1, часть 6).
+ * Творческие типы проектов: от типа зависят цвет и иконка.
  * Классы записаны целиком, чтобы Tailwind нашёл их при сборке.
  */
 export const PROJECT_TYPES = {

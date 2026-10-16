@@ -35,7 +35,7 @@ const devRoutes = import.meta.env.DEV
     ]
   : [];
 
-// Карта сайта — PLAN.md, часть 1.4. Защита /app появится на этапе 4.
+// Карта сайта MVP. Защита /app появится вместе с авторизацией.
 export const router = createBrowserRouter([
   {
     errorElement: <RouteErrorPage />,

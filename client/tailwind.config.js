@@ -9,7 +9,7 @@ export default {
   darkMode: 'class',
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
-    // Шкала из PLAN.md: 12/14/16/20/24/32/48
+    // Шкала дизайн-системы: 12/14/16/20/24/32/48
     fontSize: {
       xs: ['0.75rem', { lineHeight: '1rem' }],
       sm: ['0.875rem', { lineHeight: '1.25rem' }],

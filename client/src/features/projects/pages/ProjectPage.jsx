@@ -16,7 +16,7 @@ import { PageHeader } from '@/components/layout';
 import { Badge, Button, Dropdown, EmptyState, Tabs } from '@/components/ui';
 import { toast } from '@/lib/toast';
 
-// Вкладки страницы проекта (PLAN.md 1.4) и этапы, на которых они появятся
+// Вкладки страницы проекта и этапы, на которых они появятся
 const tabs = [
   { value: 'overview', label: 'Обзор', icon: LayoutGrid, stage: 6 },
   { value: 'board', label: 'Доска', icon: Kanban, stage: 7 },
