@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail, User } from 'lucide-react';
 import * as authApi from '@/api/auth';
 import { Button, Input, PasswordInput } from '@/components/ui';
+import { useThemeStore } from '@/lib/theme';
 import { useAuthStore } from '../authStore';
 import { AuthForm, AuthLink } from '../components/AuthForm';
 import { registerSchema } from '../schemas';
@@ -25,7 +26,9 @@ export default function RegisterPage() {
   const onSubmit = handleSubmit(async (values) => {
     setFormError(null);
     try {
-      const session = await authApi.register(values);
+      // Тему, выбранную до регистрации, сохраняем в новый профиль
+      const theme = useThemeStore.getState().preference;
+      const session = await authApi.register({ ...values, theme });
       // После регистрации — онбординг (GuestRoute выполнит переход)
       useAuthStore.getState().setSession(session, { redirectTo: '/app/onboarding' });
     } catch (error) {

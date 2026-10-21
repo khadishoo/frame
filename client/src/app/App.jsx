@@ -6,6 +6,7 @@ import { queryClient } from '@/lib/queryClient';
 import { AuthBootstrap } from './AuthBootstrap';
 import { router } from './router';
 import { ThemeProvider } from './ThemeProvider';
+import { ThemeSync } from './ThemeSync';
 
 // Корень приложения: провайдеры оборачивают роутер
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
           <AuthBootstrap>
             <RouterProvider router={router} />
           </AuthBootstrap>
+          <ThemeSync />
           <Toaster />
         </ThemeProvider>
       </MotionConfig>

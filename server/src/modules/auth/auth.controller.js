@@ -1,25 +1,5 @@
-import { env } from '../../config/env.js';
 import * as authService from './auth.service.js';
-
-export const REFRESH_COOKIE = 'refresh_token';
-
-// Cookie уходит только на /api/v1/auth/* — остальные запросы её не несут
-const cookieBase = {
-  httpOnly: true, // недоступна из JavaScript → не украсть через XSS
-  secure: env.isProd, // в production только по HTTPS
-  sameSite: 'lax',
-  path: '/api/v1/auth',
-};
-
-const setRefreshCookie = (res, token) =>
-  res.cookie(REFRESH_COOKIE, token, {
-    ...cookieBase,
-    maxAge: env.REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000,
-  });
-
-const clearRefreshCookie = (res) => res.clearCookie(REFRESH_COOKIE, cookieBase);
-
-const sessionMeta = (req) => ({ userAgent: req.get('user-agent') });
+import { REFRESH_COOKIE, clearRefreshCookie, sessionMeta, setRefreshCookie } from './cookies.js';
 
 export const register = async (req, res) => {
   const { user, accessToken, refreshToken } = await authService.register(

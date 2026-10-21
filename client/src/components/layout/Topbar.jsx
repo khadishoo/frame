@@ -6,15 +6,25 @@ import {
   ListChecks,
   LogOut,
   Menu,
+  Monitor,
+  Moon,
   Plus,
   Search,
   Settings,
+  Sun,
   User,
 } from 'lucide-react';
+import { useThemeStore } from '@/lib/theme';
 import { toast } from '@/lib/toast';
 import { Avatar, Button, Dropdown, LogoMark, ThemeToggle } from '@/components/ui';
 import { useAuthStore } from '@/features/auth/authStore';
 import { useLogout } from '@/features/auth/hooks/useLogout';
+
+const themeItems = [
+  { value: 'light', label: 'Светлая', icon: Sun },
+  { value: 'dark', label: 'Тёмная', icon: Moon },
+  { value: 'system', label: 'Как в системе', icon: Monitor },
+];
 
 function SearchButton() {
   const handleClick = () =>
@@ -50,6 +60,8 @@ export function Topbar({ onMenuClick }) {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const logout = useLogout();
+  const themePreference = useThemeStore((s) => s.preference);
+  const setTheme = useThemeStore((s) => s.setPreference);
   const soon = (what, stage) => () => toast.info(`${what} — этап ${stage}`);
 
   return (
@@ -109,11 +121,15 @@ export function Topbar({ onMenuClick }) {
         items={[
           { type: 'label', label: user.email },
           { label: 'Профиль', icon: User, onSelect: () => navigate('/app/settings/profile') },
-          {
-            label: 'Настройки',
-            icon: Settings,
-            onSelect: () => navigate('/app/settings/appearance'),
-          },
+          { label: 'Настройки', icon: Settings, onSelect: () => navigate('/app/settings/account') },
+          { type: 'separator' },
+          { type: 'label', label: 'Тема' },
+          ...themeItems.map(({ value, label, icon }) => ({
+            label,
+            icon,
+            checked: themePreference === value,
+            onSelect: () => setTheme(value),
+          })),
           { type: 'separator' },
           { label: 'Выйти', icon: LogOut, danger: true, onSelect: logout },
         ]}

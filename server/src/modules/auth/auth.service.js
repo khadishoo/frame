@@ -1,12 +1,10 @@
 import argon2 from 'argon2';
 import { db } from '../../config/db.js';
-import { env } from '../../config/env.js';
 import { AppError } from '../../utils/AppError.js';
-import { generateRefreshToken, hashToken, signAccessToken } from '../../utils/tokens.js';
+import { hashToken } from '../../utils/tokens.js';
 import { findUserByEmail, findUserById, toPublicUser } from '../users/users.service.js';
 import { createPersonalWorkspace, listUserWorkspaces } from '../workspaces/workspaces.service.js';
-
-const DAY_MS = 24 * 60 * 60 * 1000;
+import { createSession, revokeAllSessions } from './sessions.js';
 
 const invalidCredentials = () =>
   new AppError(401, 'INVALID_CREDENTIALS', 'Неверный email или пароль');
@@ -22,27 +20,7 @@ const getDummyHash = () => {
   return dummyHash;
 };
 
-/** Новая сессия: access JWT + refresh-токен (в БД — только его хэш). */
-const createSession = async (userId, { userAgent } = {}, trx = db) => {
-  const refreshToken = generateRefreshToken();
-
-  await trx('refresh_tokens').insert({
-    user_id: userId,
-    token_hash: hashToken(refreshToken),
-    expires_at: new Date(Date.now() + env.REFRESH_TOKEN_TTL_DAYS * DAY_MS),
-    user_agent: userAgent?.slice(0, 255) ?? null,
-  });
-
-  return { accessToken: signAccessToken(userId), refreshToken };
-};
-
-const revokeAllSessions = (userId, trx = db) =>
-  trx('refresh_tokens')
-    .where({ user_id: userId })
-    .whereNull('revoked_at')
-    .update({ revoked_at: trx.fn.now() });
-
-export const register = async ({ email, password, name }, meta) => {
+export const register = async ({ email, password, name, theme }, meta) => {
   const passwordHash = await argon2.hash(password); // argon2id по умолчанию
 
   let user;
@@ -51,7 +29,7 @@ export const register = async ({ email, password, name }, meta) => {
     // если что-то упадёт, в БД не останется «половины» регистрации
     user = await db.transaction(async (trx) => {
       const [created] = await trx('users')
-        .insert({ email, password_hash: passwordHash, name })
+        .insert({ email, password_hash: passwordHash, name, theme })
         .returning('*');
       await createPersonalWorkspace(trx, created);
       return created;

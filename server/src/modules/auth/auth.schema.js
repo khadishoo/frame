@@ -22,6 +22,8 @@ export const registerSchema = z.object({
       .trim()
       .min(1, 'Введите имя')
       .max(80, 'Имя — максимум 80 символов'),
+    // Тема, выбранная до регистрации, переезжает в профиль
+    theme: z.enum(['light', 'dark', 'system']).optional(),
   }),
 });
 

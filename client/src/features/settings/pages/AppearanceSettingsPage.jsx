@@ -1,3 +1,4 @@
+import { Cloud } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui';
 import { useThemeStore } from '@/lib/theme';
 import { SettingsSection } from '../components/SettingsSection';
@@ -9,10 +10,8 @@ export default function AppearanceSettingsPage() {
   const resolved = useThemeStore((state) => state.resolved);
 
   return (
-    <SettingsSection
-      title="Оформление"
-      description="Тема сохраняется в этом браузере. Синхронизация с профилем — на этапе 5."
-    >
+    <SettingsSection title="Оформление" description="Тема интерфейса.">
+      <title>Оформление · Настройки · Frame</title>
       <div className="flex flex-col gap-3">
         <ThemeToggle showLabels className="w-fit max-w-full flex-wrap" />
         {preference === 'system' && (
@@ -21,6 +20,10 @@ export default function AppearanceSettingsPage() {
             настройками устройства.
           </p>
         )}
+        <p className="flex items-start gap-2 text-sm text-muted">
+          <Cloud className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+          Тема сохраняется в вашем профиле — на всех устройствах после входа будет одинаковой.
+        </p>
       </div>
     </SettingsSection>
   );

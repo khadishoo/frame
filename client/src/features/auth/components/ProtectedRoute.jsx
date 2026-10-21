@@ -14,6 +14,11 @@ export function ProtectedRoute() {
 
   if (status === 'loading') return <SplashScreen />;
 
+  // Аккаунт удалён — на главную, а не на вход
+  if (status !== 'authenticated' && endReason === 'deleted') {
+    return <Navigate to="/" replace />;
+  }
+
   if (status !== 'authenticated') {
     const from = `${location.pathname}${location.search}${location.hash}`;
     return <Navigate to="/login" replace state={endReason === 'logout' ? undefined : { from }} />;

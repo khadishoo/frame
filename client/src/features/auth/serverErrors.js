@@ -10,6 +10,18 @@ export const applyServerError = (error, setError) => {
     return 'Нет соединения с сервером. Проверьте интернет и попробуйте снова';
   }
 
+  // Сервер указал поля (пути вида body.username) — показываем ошибки под ними.
+  // Так работают VALIDATION_ERROR, USERNAME_TAKEN, «неверный пароль» и др.
+  let shownAtField = false;
+  for (const detail of apiError?.details ?? []) {
+    const field = detail.path?.replace(/^body\./, '');
+    if (field && !field.includes('.')) {
+      setError(field, { message: detail.message });
+      shownAtField = true;
+    }
+  }
+  if (shownAtField) return null;
+
   switch (apiError?.code) {
     case 'EMAIL_TAKEN':
       setError('email', { message: 'Этот email уже зарегистрирован — попробуйте войти' });
@@ -18,18 +30,8 @@ export const applyServerError = (error, setError) => {
       return 'Неверный email или пароль';
     case 'TOO_MANY_REQUESTS':
       return 'Слишком много попыток. Подождите минуту и попробуйте снова';
-    case 'VALIDATION_ERROR': {
-      // Сервер отдаёт пути вида body.email — показываем под соответствующим полем
-      let shown = false;
-      for (const detail of apiError.details ?? []) {
-        const field = detail.path?.replace(/^body\./, '');
-        if (field && !field.includes('.')) {
-          setError(field, { message: detail.message });
-          shown = true;
-        }
-      }
-      return shown ? null : 'Проверьте правильность заполнения формы';
-    }
+    case 'VALIDATION_ERROR':
+      return 'Проверьте правильность заполнения формы';
     default:
       return status >= 500
         ? 'На сервере что-то сломалось. Попробуйте чуть позже'

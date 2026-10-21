@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router';
+import { motion } from 'framer-motion';
 import { KeyRound, Palette, User } from 'lucide-react';
 import { PageHeader } from '@/components/layout';
 import { cn } from '@/lib/cn';
@@ -9,38 +10,50 @@ const sections = [
   { to: 'appearance', label: 'Оформление', icon: Palette },
 ];
 
-/** Общий каркас /app/settings/*: подменю слева (на телефоне — сверху) и контент. */
+/** Каркас /app/settings/*: вкладки-ссылки (на телефоне прокручиваются) и содержимое. */
 export function SettingsLayout() {
   return (
-    <>
+    <div className="mx-auto w-full max-w-3xl">
       <PageHeader title="Настройки" description="Профиль, безопасность и внешний вид." />
-      <div className="flex flex-col gap-6 md:flex-row md:gap-10">
-        <nav
-          aria-label="Разделы настроек"
-          className="-mx-4 flex gap-1 overflow-x-auto px-4 md:mx-0 md:w-48 md:shrink-0 md:flex-col md:px-0"
-        >
+
+      <nav
+        aria-label="Разделы настроек"
+        className="-mx-4 mb-6 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden"
+      >
+        <ul className="flex min-w-max gap-1 border-b border-border">
           {sections.map(({ to, label, icon: Icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) =>
-                cn(
-                  'focus-ring flex h-9 shrink-0 items-center gap-2.5 rounded-lg px-3 text-sm font-medium transition-colors',
-                  isActive
-                    ? 'bg-surface-2 text-fg'
-                    : 'text-muted hover:bg-surface-2/60 hover:text-fg',
-                )
-              }
-            >
-              <Icon className="size-4" aria-hidden="true" />
-              {label}
-            </NavLink>
+            <li key={to}>
+              <NavLink
+                to={to}
+                className={({ isActive }) =>
+                  cn(
+                    'focus-ring relative flex h-10 items-center gap-2 rounded-t-md px-3 text-sm font-medium transition-colors',
+                    isActive ? 'text-fg' : 'text-muted hover:text-fg',
+                  )
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <Icon className="size-4" aria-hidden="true" />
+                    {label}
+                    {isActive && (
+                      <motion.span
+                        layoutId="settings-tab"
+                        className="absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-accent"
+                        transition={{ type: 'spring', duration: 0.3, bounce: 0.15 }}
+                      />
+                    )}
+                  </>
+                )}
+              </NavLink>
+            </li>
           ))}
-        </nav>
-        <div className="min-w-0 flex-1">
-          <Outlet />
-        </div>
+        </ul>
+      </nav>
+
+      <div className="flex flex-col gap-6">
+        <Outlet />
       </div>
-    </>
+    </div>
   );
 }

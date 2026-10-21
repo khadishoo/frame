@@ -7,7 +7,7 @@ import { create } from 'zustand';
  * status: 'loading' — идёт тихий refresh при старте;
  *         'authenticated' — есть user и accessToken;
  *         'guest' — не вошёл (или сессия закончилась).
- * endReason: почему сессия закончилась — 'logout' | 'expired' | null.
+ * endReason: почему сессия закончилась — 'logout' | 'expired' | 'deleted' | null.
  *   После logout не запоминаем страницу для возврата, после 'expired' — запоминаем.
  * redirectTo: куда отправить после входа (регистрация → онбординг).
  */

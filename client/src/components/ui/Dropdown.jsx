@@ -1,5 +1,6 @@
 import { cloneElement, useCallback, useId, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Check } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useClickOutside } from '@/hooks/useClickOutside';
 
@@ -8,7 +9,7 @@ const aligns = { start: 'left-0 origin-top-left', end: 'right-0 origin-top-right
 /**
  * Выпадающее меню.
  * trigger — элемент-кнопка (получит aria-атрибуты; клики и клавиши ловит обёртка).
- * items — [{ label, icon, onSelect, shortcut, danger, disabled }
+ * items — [{ label, icon, onSelect, shortcut, danger, disabled, checked? }
  *         | { type: 'separator' } | { type: 'label', label }]
  * Клавиатура: ↑/↓, Home/End, Enter, Esc (возвращает фокус на кнопку), Tab закрывает.
  */
@@ -28,7 +29,9 @@ export function Dropdown({ trigger, items, align = 'end', className, menuClassNa
   useClickOutside(refs, () => close(), open);
 
   const menuItems = () => [
-    ...(menuRef.current?.querySelectorAll('[role="menuitem"]:not([disabled])') ?? []),
+    ...(menuRef.current?.querySelectorAll(
+      '[role="menuitem"]:not([disabled]), [role="menuitemradio"]:not([disabled])',
+    ) ?? []),
   ];
 
   const focusItem = (index) => {
@@ -131,7 +134,9 @@ export function Dropdown({ trigger, items, align = 'end', className, menuClassNa
                 <button
                   key={index}
                   type="button"
-                  role="menuitem"
+                  // checked задан → пункт-переключатель (например, выбор темы)
+                  role={item.checked === undefined ? 'menuitem' : 'menuitemradio'}
+                  aria-checked={item.checked}
                   tabIndex={-1}
                   disabled={item.disabled}
                   onClick={() => {
@@ -154,6 +159,7 @@ export function Dropdown({ trigger, items, align = 'end', className, menuClassNa
                   {item.shortcut && (
                     <kbd className="font-sans text-xs text-muted">{item.shortcut}</kbd>
                   )}
+                  {item.checked && <Check className="size-4 shrink-0 text-fg" aria-hidden="true" />}
                 </button>
               );
             })}
