@@ -6,8 +6,24 @@ on:
 
 jobs:
   server:
-    name: Server — lint
+    name: Server — lint & tests
     runs-on: ubuntu-latest
+    # PostgreSQL для автотестов (globalSetup сам создаст frame_test и применит миграции)
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/frame_test
+      TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/frame_test
+      CLIENT_URL: http://localhost:5180
+      JWT_ACCESS_SECRET: ci-only-secret-not-used-anywhere-else-0123456789
     defaults:
       run:
         working-directory: server
@@ -21,7 +37,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npx prettier --check .
-      # Тесты (Supertest + PostgreSQL-сервис) добавятся на этапе 4/10
+      - run: npm test
 
   client:
     name: Client — lint & build

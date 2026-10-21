@@ -28,8 +28,13 @@ const normalize = (err) => {
     return { status: 413, code: 'PAYLOAD_TOO_LARGE', message: 'Слишком большое тело запроса' };
   }
 
-  if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
-    return { status: 401, code: 'UNAUTHORIZED', message: 'Недействительный или истёкший токен' };
+  // Клиент по TOKEN_EXPIRED понимает, что пора обновить access-токен через /auth/refresh
+  if (err.name === 'TokenExpiredError') {
+    return { status: 401, code: 'TOKEN_EXPIRED', message: 'Срок действия токена истёк' };
+  }
+
+  if (err.name === 'JsonWebTokenError' || err.name === 'NotBeforeError') {
+    return { status: 401, code: 'UNAUTHORIZED', message: 'Недействительный токен' };
   }
 
   // PostgreSQL: нарушение уникальности

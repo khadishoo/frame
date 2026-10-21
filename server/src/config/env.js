@@ -14,6 +14,13 @@ const envSchema = z.object({
     .string({ error: 'не задан' })
     .regex(/^postgres(ql)?:\/\//, 'должен начинаться с postgres:// или postgresql://'),
   CLIENT_URL: z.url({ error: 'должен быть URL, например http://localhost:5180' }),
+  // Нужна только для автотестов (npm test)
+  TEST_DATABASE_URL: z.string().optional(),
+  JWT_ACCESS_SECRET: z
+    .string({ error: 'не задан' })
+    .min(32, 'слишком короткий — нужна случайная строка от 32 символов'),
+  JWT_ACCESS_TTL: z.string().default('15m'),
+  REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().positive().default(30),
 });
 
 const parsed = envSchema.safeParse(process.env);

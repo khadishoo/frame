@@ -3,12 +3,13 @@
 Веб-приложение для организации творческих проектов: рисунков, музыки, видео, фото,
 сценариев, разработки. Собирайте идеи, планируйте задачи и доводите проекты до конца.
 
-> 🚧 В разработке. Готовы каркас, UI-кит и layouts; следующий шаг — авторизация.
+> 🚧 В разработке. Готовы каркас, UI-кит, layouts и API авторизации; следующий шаг — экраны входа.
 
 ## Стек
 
 **Клиент:** React, Vite, Tailwind CSS, React Router, TanStack Query, axios
-**Сервер:** Node.js 22, Express, PostgreSQL 17, Knex, Zod, pino
+**Сервер:** Node.js 22, Express, PostgreSQL 17, Knex, Zod, pino, JWT + refresh-токены, argon2
+**Тесты:** Vitest, Supertest
 
 ## Локальный запуск
 
@@ -25,6 +26,9 @@ npm run migrate --prefix server
 
 # 3. Запуск сервера и клиента одной командой (из корня)
 npm run dev
+
+# Тесты API (база frame_test создаётся автоматически, нужен TEST_DATABASE_URL в server/.env)
+npm run test
 ```
 
 - Клиент: http://localhost:5180 (порт закреплён, `strictPort`)
