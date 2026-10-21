@@ -15,6 +15,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import {
+  Alert,
   Avatar,
   Badge,
   Button,
@@ -26,6 +27,7 @@ import {
   Logo,
   LogoMark,
   Modal,
+  PasswordInput,
   Select,
   Skeleton,
   Spinner,
@@ -46,7 +48,7 @@ const sections = [
   ['badges', 'Badge и Avatar'],
   ['tabs', 'Tabs'],
   ['overlays', 'Dropdown, Modal, Confirm'],
-  ['toasts', 'Toast'],
+  ['toasts', 'Toast и Alert'],
   ['loading', 'Skeleton и Spinner'],
   ['empty', 'EmptyState'],
   ['brand', 'Логотип'],
@@ -340,6 +342,16 @@ export default function UiKitPage() {
               />
               <Input label="С ошибкой" defaultValue="ab" error="Минимум 3 символа" />
               <Input label="Отключено" defaultValue="Только чтение" disabled />
+              <PasswordInput
+                label="Пароль"
+                placeholder="Минимум 8 символов"
+                hint="С кнопкой «показать»"
+              />
+              <PasswordInput
+                label="Пароль с ошибкой"
+                defaultValue="short"
+                error="Пароль — минимум 8 символов"
+              />
               <Select
                 label="Творческий тип"
                 placeholder="Выберите тип"
@@ -454,7 +466,7 @@ export default function UiKitPage() {
             <OverlaysDemo />
           </Section>
 
-          <Section id="toasts" title="Toast">
+          <Section id="toasts" title="Toast и Alert">
             <Row>
               <Button variant="secondary" onClick={() => toast.success('Проект создан')}>
                 Success
@@ -478,6 +490,17 @@ export default function UiKitPage() {
               >
                 Info
               </Button>
+            </Row>
+            <Row
+              label="Alert — сообщение внутри страницы или формы"
+              className="flex-col items-stretch"
+            >
+              <Alert variant="danger">Неверный email или пароль</Alert>
+              <Alert variant="warning" title="Дедлайн завтра">
+                Осталось 3 задачи в проекте «Альбом»
+              </Alert>
+              <Alert variant="success">Изменения сохранены</Alert>
+              <Alert variant="info">Сброс пароля по email появится позже</Alert>
             </Row>
           </Section>
 

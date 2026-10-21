@@ -40,7 +40,7 @@ jobs:
       - run: npm test
 
   client:
-    name: Client — lint & build
+    name: Client — lint, tests & build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -55,4 +55,5 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npx prettier --check .
+      - run: npm test
       - run: npm run build

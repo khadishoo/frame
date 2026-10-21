@@ -13,7 +13,8 @@ import {
 } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { Avatar, Button, Dropdown, LogoMark, ThemeToggle } from '@/components/ui';
-import { demoUser } from './navigation';
+import { useAuthStore } from '@/features/auth/authStore';
+import { useLogout } from '@/features/auth/hooks/useLogout';
 
 function SearchButton() {
   const handleClick = () =>
@@ -47,6 +48,8 @@ function SearchButton() {
 
 export function Topbar({ onMenuClick }) {
   const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
+  const logout = useLogout();
   const soon = (what, stage) => () => toast.info(`${what} — этап ${stage}`);
 
   return (
@@ -98,13 +101,13 @@ export function Topbar({ onMenuClick }) {
           <button
             type="button"
             className="focus-ring rounded-full"
-            aria-label={`Меню пользователя ${demoUser.name}`}
+            aria-label={`Меню пользователя ${user.name}`}
           >
-            <Avatar name={demoUser.name} size="sm" />
+            <Avatar name={user.name} src={user.avatarUrl} size="sm" />
           </button>
         }
         items={[
-          { type: 'label', label: demoUser.email },
+          { type: 'label', label: user.email },
           { label: 'Профиль', icon: User, onSelect: () => navigate('/app/settings/profile') },
           {
             label: 'Настройки',
@@ -112,7 +115,7 @@ export function Topbar({ onMenuClick }) {
             onSelect: () => navigate('/app/settings/appearance'),
           },
           { type: 'separator' },
-          { label: 'Выйти', icon: LogOut, danger: true, onSelect: soon('Выход', 4) },
+          { label: 'Выйти', icon: LogOut, danger: true, onSelect: logout },
         ]}
       />
     </header>

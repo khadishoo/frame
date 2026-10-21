@@ -1,6 +1,7 @@
 import { FolderPlus } from 'lucide-react';
 import { PageHeader } from '@/components/layout';
 import { Button, EmptyState, Skeleton } from '@/components/ui';
+import { useAuthStore } from '@/features/auth/authStore';
 import { toast } from '@/lib/toast';
 
 const greeting = () => {
@@ -14,10 +15,12 @@ const greeting = () => {
 const widgets = ['Активные проекты', 'Задачи на неделю', 'Выполнено', 'Идеи'];
 
 export default function DashboardPage() {
+  const name = useAuthStore((s) => s.user?.name);
+
   return (
     <>
       <PageHeader
-        title={greeting()}
+        title={name ? `${greeting()}, ${name}` : greeting()}
         description="Здесь будет сводка по вашим проектам. Дашборд появится на этапе 9."
       />
 

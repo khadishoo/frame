@@ -1,6 +1,8 @@
 import { Navigate, createBrowserRouter } from 'react-router';
 import { AppLayout, AuthLayout, PublicLayout } from '@/components/layout';
 import AnalyticsPage from '@/features/analytics/pages/AnalyticsPage';
+import { GuestRoute } from '@/features/auth/components/GuestRoute';
+import { ProtectedRoute } from '@/features/auth/components/ProtectedRoute';
 import ForgotPasswordPage from '@/features/auth/pages/ForgotPasswordPage';
 import LoginPage from '@/features/auth/pages/LoginPage';
 import RegisterPage from '@/features/auth/pages/RegisterPage';
@@ -10,6 +12,7 @@ import FavoritesPage from '@/features/favorites/pages/FavoritesPage';
 import LandingPage from '@/features/landing/pages/LandingPage';
 import IdeaEditorPage from '@/features/notes/pages/IdeaEditorPage';
 import IdeasPage from '@/features/notes/pages/IdeasPage';
+import OnboardingPage from '@/features/onboarding/pages/OnboardingPage';
 import NotificationsPage from '@/features/notifications/pages/NotificationsPage';
 import ProjectPage from '@/features/projects/pages/ProjectPage';
 import ProjectsPage from '@/features/projects/pages/ProjectsPage';
@@ -35,7 +38,7 @@ const devRoutes = import.meta.env.DEV
     ]
   : [];
 
-// Карта сайта MVP. Защита /app появится вместе с авторизацией.
+// Карта сайта MVP. /login и /register — только для гостей, /app/* — только для вошедших.
 export const router = createBrowserRouter([
   {
     errorElement: <RouteErrorPage />,
@@ -47,37 +50,49 @@ export const router = createBrowserRouter([
       {
         element: <AuthLayout />,
         children: [
-          { path: '/login', element: <LoginPage /> },
-          { path: '/register', element: <RegisterPage /> },
+          {
+            element: <GuestRoute />,
+            children: [
+              { path: '/login', element: <LoginPage /> },
+              { path: '/register', element: <RegisterPage /> },
+            ],
+          },
           { path: '/forgot-password', element: <ForgotPasswordPage /> },
           { path: '/invite/:token', element: <InvitePage /> },
         ],
       },
       {
         path: '/app',
-        element: <AppLayout />,
+        element: <ProtectedRoute />,
         children: [
-          { index: true, element: <DashboardPage /> },
-          { path: 'projects', element: <ProjectsPage /> },
-          { path: 'projects/:id', element: <ProjectPage /> },
-          { path: 'tasks', element: <MyTasksPage /> },
-          { path: 'calendar', element: <CalendarPage /> },
-          { path: 'ideas', element: <IdeasPage /> },
-          { path: 'ideas/:id', element: <IdeaEditorPage /> },
-          { path: 'favorites', element: <FavoritesPage /> },
-          { path: 'analytics', element: <AnalyticsPage /> },
-          { path: 'notifications', element: <NotificationsPage /> },
+          // Онбординг — без сайдбара и топбара
+          { path: 'onboarding', element: <OnboardingPage /> },
           {
-            path: 'settings',
-            element: <SettingsLayout />,
+            element: <AppLayout />,
             children: [
-              { index: true, element: <Navigate to="profile" replace /> },
-              { path: 'profile', element: <ProfileSettingsPage /> },
-              { path: 'account', element: <AccountSettingsPage /> },
-              { path: 'appearance', element: <AppearanceSettingsPage /> },
+              { index: true, element: <DashboardPage /> },
+              { path: 'projects', element: <ProjectsPage /> },
+              { path: 'projects/:id', element: <ProjectPage /> },
+              { path: 'tasks', element: <MyTasksPage /> },
+              { path: 'calendar', element: <CalendarPage /> },
+              { path: 'ideas', element: <IdeasPage /> },
+              { path: 'ideas/:id', element: <IdeaEditorPage /> },
+              { path: 'favorites', element: <FavoritesPage /> },
+              { path: 'analytics', element: <AnalyticsPage /> },
+              { path: 'notifications', element: <NotificationsPage /> },
+              {
+                path: 'settings',
+                element: <SettingsLayout />,
+                children: [
+                  { index: true, element: <Navigate to="profile" replace /> },
+                  { path: 'profile', element: <ProfileSettingsPage /> },
+                  { path: 'account', element: <AccountSettingsPage /> },
+                  { path: 'appearance', element: <AppearanceSettingsPage /> },
+                ],
+              },
+              { path: 'workspace/settings', element: <WorkspaceSettingsPage /> },
             ],
           },
-          { path: 'workspace/settings', element: <WorkspaceSettingsPage /> },
         ],
       },
       ...devRoutes,

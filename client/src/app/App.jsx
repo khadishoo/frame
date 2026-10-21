@@ -3,6 +3,7 @@ import { MotionConfig } from 'framer-motion';
 import { RouterProvider } from 'react-router';
 import { Toaster } from '@/components/ui';
 import { queryClient } from '@/lib/queryClient';
+import { AuthBootstrap } from './AuthBootstrap';
 import { router } from './router';
 import { ThemeProvider } from './ThemeProvider';
 
@@ -13,7 +14,9 @@ export default function App() {
       {/* reducedMotion="user" — анимации отключаются при prefers-reduced-motion */}
       <MotionConfig reducedMotion="user">
         <ThemeProvider>
-          <RouterProvider router={router} />
+          <AuthBootstrap>
+            <RouterProvider router={router} />
+          </AuthBootstrap>
           <Toaster />
         </ThemeProvider>
       </MotionConfig>

@@ -34,6 +34,3 @@ export const mobileTabs = [
   '/app/ideas',
   '/app/calendar',
 ].map((to) => mainNav.find((item) => item.to === to));
-
-// Временный пользователь до авторизации (этап 4)
-export const demoUser = { name: 'Гость', email: 'guest@frame.local' };

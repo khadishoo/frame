@@ -81,6 +81,12 @@
     @apply font-display tracking-tight;
   }
 
+  /* Своя кнопка «показать пароль» есть в PasswordInput — встроенную в Edge прячем */
+  input[type='password']::-ms-reveal,
+  input[type='password']::-ms-clear {
+    display: none;
+  }
+
   ::selection {
     background: rgb(var(--ring) / 0.25);
   }
@@ -123,6 +129,16 @@
 
   .dark .bg-grain::before {
     opacity: 0.08;
+  }
+}
+
+/* Плавное появление сплэша (с задержкой — см. SplashScreen) */
+@keyframes splash-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 

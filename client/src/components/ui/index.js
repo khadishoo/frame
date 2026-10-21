@@ -1,4 +1,5 @@
 // Публичный API UI-кита: import { Button, Modal } from '@/components/ui'
+export { Alert } from './Alert';
 export { Avatar } from './Avatar';
 export { Badge } from './Badge';
 export { Button } from './Button';
@@ -10,6 +11,7 @@ export { EmptyState } from './EmptyState';
 export { Input } from './Input';
 export { Logo, LogoMark } from './Logo';
 export { Modal } from './Modal';
+export { PasswordInput } from './PasswordInput';
 export { Select } from './Select';
 export { Skeleton } from './Skeleton';
 export { Spinner } from './Spinner';

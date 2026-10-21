@@ -1,8 +1,11 @@
 import { Link, Outlet } from 'react-router';
 import { Logo, ThemeToggle, buttonVariants } from '@/components/ui';
+import { useAuthStore } from '@/features/auth/authStore';
 
 /** Публичные страницы: лендинг, приглашения. */
 export function PublicLayout() {
+  const authenticated = useAuthStore((s) => s.status === 'authenticated');
+
   return (
     <div className="bg-grain flex min-h-dvh flex-col">
       <header className="mx-auto flex h-16 w-full max-w-6xl items-center gap-2 px-4 sm:px-6">
@@ -10,12 +13,20 @@ export function PublicLayout() {
           <Logo />
         </Link>
         <ThemeToggle variant="icon" />
-        <Link to="/login" className={buttonVariants({ variant: 'ghost', size: 'sm' })}>
-          Войти
-        </Link>
-        <Link to="/register" className={buttonVariants({ size: 'sm' })}>
-          Начать
-        </Link>
+        {authenticated ? (
+          <Link to="/app" className={buttonVariants({ size: 'sm' })}>
+            Открыть приложение
+          </Link>
+        ) : (
+          <>
+            <Link to="/login" className={buttonVariants({ variant: 'ghost', size: 'sm' })}>
+              Войти
+            </Link>
+            <Link to="/register" className={buttonVariants({ size: 'sm' })}>
+              Начать
+            </Link>
+          </>
+        )}
       </header>
 
       <main className="flex flex-1 flex-col">

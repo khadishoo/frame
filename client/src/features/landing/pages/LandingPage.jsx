@@ -62,8 +62,8 @@ export default function LandingPage() {
             Начать бесплатно
             <ArrowRight />
           </Link>
-          <Link to="/app" className={buttonVariants({ variant: 'secondary', size: 'lg' })}>
-            Посмотреть приложение
+          <Link to="/login" className={buttonVariants({ variant: 'secondary', size: 'lg' })}>
+            У меня есть аккаунт
           </Link>
         </motion.div>
       </section>
