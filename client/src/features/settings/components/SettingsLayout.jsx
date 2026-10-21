@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from 'react-router';
 import { motion } from 'framer-motion';
-import { KeyRound, Palette, User } from 'lucide-react';
+import { KeyRound, Palette, Tags, User } from 'lucide-react';
 import { PageHeader } from '@/components/layout';
 import { cn } from '@/lib/cn';
 
@@ -8,13 +8,17 @@ const sections = [
   { to: 'profile', label: 'Профиль', icon: User },
   { to: 'account', label: 'Аккаунт', icon: KeyRound },
   { to: 'appearance', label: 'Оформление', icon: Palette },
+  { to: 'labels', label: 'Категории и теги', icon: Tags },
 ];
 
 /** Каркас /app/settings/*: вкладки-ссылки (на телефоне прокручиваются) и содержимое. */
 export function SettingsLayout() {
   return (
     <div className="mx-auto w-full max-w-3xl">
-      <PageHeader title="Настройки" description="Профиль, безопасность и внешний вид." />
+      <PageHeader
+        title="Настройки"
+        description="Профиль, безопасность, внешний вид, категории и теги."
+      />
 
       <nav
         aria-label="Разделы настроек"

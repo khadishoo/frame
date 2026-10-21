@@ -24,8 +24,13 @@ export const useFocusTrap = (containerRef, active, initialFocusRef) => {
     if (!container) return undefined;
 
     const previouslyFocused = document.activeElement;
-    const initial = initialFocusRef?.current ?? getFocusable(container)[0] ?? container;
-    initial.focus({ preventScroll: true });
+    // Поле с autoFocus внутри окна уже получило фокус — не перехватываем
+    // (иначе оно «потеряет» фокус и форма сразу покажет ошибку «обязательное поле»)
+    const alreadyInside = !initialFocusRef && container.contains(document.activeElement);
+    if (!alreadyInside) {
+      const initial = initialFocusRef?.current ?? getFocusable(container)[0] ?? container;
+      initial.focus({ preventScroll: true });
+    }
 
     const handleKeyDown = (event) => {
       if (event.key !== 'Tab') return;

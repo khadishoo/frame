@@ -19,6 +19,7 @@ import { toast } from '@/lib/toast';
 import { Avatar, Button, Dropdown, LogoMark, ThemeToggle } from '@/components/ui';
 import { useAuthStore } from '@/features/auth/authStore';
 import { useLogout } from '@/features/auth/hooks/useLogout';
+import { useProjectModal } from '@/features/projects/projectModalStore';
 
 const themeItems = [
   { value: 'light', label: 'Светлая', icon: Sun },
@@ -60,6 +61,7 @@ export function Topbar({ onMenuClick }) {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const logout = useLogout();
+  const openCreateProject = useProjectModal((s) => s.openCreate);
   const themePreference = useThemeStore((s) => s.preference);
   const setTheme = useThemeStore((s) => s.setPreference);
   const soon = (what, stage) => () => toast.info(`${what} — этап ${stage}`);
@@ -90,7 +92,7 @@ export function Topbar({ onMenuClick }) {
           </Button>
         }
         items={[
-          { label: 'Проект', icon: FolderKanban, onSelect: soon('Создание проектов', 6) },
+          { label: 'Проект', icon: FolderKanban, onSelect: openCreateProject },
           { label: 'Задачу', icon: ListChecks, onSelect: soon('Задачи', 7) },
           { label: 'Идею', icon: Lightbulb, shortcut: 'N', onSelect: soon('Идеи', 8) },
         ]}

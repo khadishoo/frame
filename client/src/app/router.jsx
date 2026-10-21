@@ -19,6 +19,7 @@ import ProjectsPage from '@/features/projects/pages/ProjectsPage';
 import { SettingsLayout } from '@/features/settings/components/SettingsLayout';
 import AccountSettingsPage from '@/features/settings/pages/AccountSettingsPage';
 import AppearanceSettingsPage from '@/features/settings/pages/AppearanceSettingsPage';
+import LabelsSettingsPage from '@/features/settings/pages/LabelsSettingsPage';
 import ProfileSettingsPage from '@/features/settings/pages/ProfileSettingsPage';
 import MyTasksPage from '@/features/tasks/pages/MyTasksPage';
 import InvitePage from '@/features/workspace/pages/InvitePage';
@@ -88,6 +89,7 @@ export const router = createBrowserRouter([
                   { path: 'profile', element: <ProfileSettingsPage /> },
                   { path: 'account', element: <AccountSettingsPage /> },
                   { path: 'appearance', element: <AppearanceSettingsPage /> },
+                  { path: 'labels', element: <LabelsSettingsPage /> },
                 ],
               },
               { path: 'workspace/settings', element: <WorkspaceSettingsPage /> },

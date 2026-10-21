@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet } from 'react-router';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
+import { ProjectFormModal } from '@/features/projects/components/ProjectFormModal';
 import { MobileDrawer, MobileTabBar } from './MobileNav';
 
 /**
@@ -34,6 +35,7 @@ export function AppLayout() {
       </div>
 
       <MobileTabBar />
+      <ProjectFormModal />
     </div>
   );
 }

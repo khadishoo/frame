@@ -2,7 +2,7 @@ import { FolderPlus } from 'lucide-react';
 import { PageHeader } from '@/components/layout';
 import { Button, EmptyState, Skeleton } from '@/components/ui';
 import { useAuthStore } from '@/features/auth/authStore';
-import { toast } from '@/lib/toast';
+import { useProjectModal } from '@/features/projects/projectModalStore';
 
 const greeting = () => {
   const hour = new Date().getHours();
@@ -16,6 +16,7 @@ const widgets = ['Активные проекты', 'Задачи на неде�
 
 export default function DashboardPage() {
   const name = useAuthStore((s) => s.user?.name);
+  const openCreate = useProjectModal((s) => s.openCreate);
 
   return (
     <>
@@ -38,11 +39,7 @@ export default function DashboardPage() {
         icon={FolderPlus}
         title="Пока ни одного проекта"
         description="Соберите идеи, референсы и задачи в одном месте — начните с первого проекта."
-        action={
-          <Button onClick={() => toast.info('Создание проектов — этап 6')}>
-            Создать первый проект
-          </Button>
-        }
+        action={<Button onClick={openCreate}>Создать первый проект</Button>}
       />
     </>
   );

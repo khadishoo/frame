@@ -28,6 +28,7 @@ import {
   LogoMark,
   Modal,
   PasswordInput,
+  ProgressRing,
   Select,
   Skeleton,
   Spinner,
@@ -49,7 +50,7 @@ const sections = [
   ['tabs', 'Tabs'],
   ['overlays', 'Dropdown, Modal, Confirm'],
   ['toasts', 'Toast и Alert'],
-  ['loading', 'Skeleton и Spinner'],
+  ['loading', 'Skeleton, Spinner, ProgressRing'],
   ['empty', 'EmptyState'],
   ['brand', 'Логотип'],
 ];
@@ -504,7 +505,7 @@ export default function UiKitPage() {
             </Row>
           </Section>
 
-          <Section id="loading" title="Skeleton и Spinner">
+          <Section id="loading" title="Skeleton, Spinner, ProgressRing">
             <Row label="Карточка проекта (скелетон)">
               <div className="w-full max-w-xs rounded-xl border border-border p-4">
                 <Skeleton className="mb-4 h-28 w-full" />
@@ -520,6 +521,12 @@ export default function UiKitPage() {
               <Spinner size="sm" />
               <Spinner />
               <Spinner size="lg" />
+            </Row>
+            <Row label="ProgressRing — цвет берётся из цвета текста">
+              <ProgressRing value={0} size="sm" className="text-type-music" />
+              <ProgressRing value={35} className="text-type-art" />
+              <ProgressRing value={70} className="text-type-dev" />
+              <ProgressRing value={100} size="lg" className="text-success" />
             </Row>
           </Section>
 

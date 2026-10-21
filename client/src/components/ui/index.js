@@ -12,6 +12,7 @@ export { Input } from './Input';
 export { Logo, LogoMark } from './Logo';
 export { Modal } from './Modal';
 export { PasswordInput } from './PasswordInput';
+export { ProgressRing } from './ProgressRing';
 export { Select } from './Select';
 export { Skeleton } from './Skeleton';
 export { Spinner } from './Spinner';

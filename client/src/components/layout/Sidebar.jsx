@@ -4,6 +4,7 @@ import { cn } from '@/lib/cn';
 import { toast } from '@/lib/toast';
 import { Avatar, Dropdown, Logo, LogoMark } from '@/components/ui';
 import { useAuthStore } from '@/features/auth/authStore';
+import { useCurrentWorkspace } from '@/features/workspaces/workspaceStore';
 import { mainNav, secondaryNav } from './navigation';
 
 /**
@@ -35,6 +36,9 @@ function NavItem({ item, compact, onNavigate }) {
 }
 
 function WorkspaceSwitcher({ compact }) {
+  const { workspace } = useCurrentWorkspace();
+  const name = workspace?.name ?? 'Пространство';
+
   return (
     <Dropdown
       align="start"
@@ -51,10 +55,10 @@ function WorkspaceSwitcher({ compact }) {
           aria-label="Переключить пространство"
         >
           <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-accent font-display text-xs font-semibold text-accent-fg">
-            Л
+            {name[0]}
           </span>
           <span className={cn('flex min-w-0 flex-1 flex-col', labelClass(compact))}>
-            <span className="truncate text-sm font-medium text-fg">Личное пространство</span>
+            <span className="truncate text-sm font-medium text-fg">{name}</span>
             <span className="text-xs text-muted">Только вы</span>
           </span>
           <ChevronsUpDown
@@ -65,7 +69,7 @@ function WorkspaceSwitcher({ compact }) {
       }
       items={[
         { type: 'label', label: 'Пространства' },
-        { label: 'Личное пространство', icon: Check },
+        { label: name, icon: Check },
         { type: 'separator' },
         {
           label: 'Создать пространство',
