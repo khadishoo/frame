@@ -3,7 +3,7 @@
 Веб-приложение для организации творческих проектов: рисунков, музыки, видео, фото,
 сценариев, разработки. Собирайте идеи, планируйте задачи и доводите проекты до конца.
 
-> 🚧 В разработке. Готовы каркас, UI-кит, авторизация (вход, регистрация, онбординг) и настройки профиля.
+> 🚧 В разработке. Готовы каркас, UI-кит, авторизация, настройки профиля и API проектов, категорий и тегов.
 
 ## Стек
 
@@ -23,6 +23,7 @@ psql -U postgres -c "CREATE DATABASE frame_dev ENCODING 'UTF8' TEMPLATE template
 npm run install:all
 Copy-Item server/.env.example server/.env   # затем впишите пароль PostgreSQL в DATABASE_URL
 npm run migrate --prefix server
+npm run seed --prefix server   # демо-данные: demo@frame.local / demo-password
 
 # 3. Запуск сервера и клиента одной командой (из корня)
 npm run dev

@@ -30,3 +30,25 @@ export const meWith = (token) => {
   const req = api().get('/api/v1/auth/me');
   return token ? req.set('Authorization', `Bearer ${token}`) : req;
 };
+
+/**
+ * Зарегистрировать пользователя и вернуть всё нужное для запросов:
+ * { token, user, wsId } — wsId его личного пространства.
+ */
+export const setupUser = async ({ email = validUser.email, name = validUser.name } = {}) => {
+  const res = await registerUser({ ...validUser, email, name });
+  const me = await meWith(res.body.accessToken);
+  return { token: res.body.accessToken, user: res.body.user, wsId: me.body.workspaces[0].id };
+};
+
+/** Запрос от имени пользователя: as(token).get('/api/v1/...') */
+export const as = (token) => {
+  const withAuth = (req) => req.set('Authorization', `Bearer ${token}`);
+  return {
+    get: (url) => withAuth(api().get(url)),
+    post: (url) => withAuth(api().post(url)),
+    patch: (url) => withAuth(api().patch(url)),
+    put: (url) => withAuth(api().put(url)),
+    delete: (url) => withAuth(api().delete(url)),
+  };
+};

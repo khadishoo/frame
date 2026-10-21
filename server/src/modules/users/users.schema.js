@@ -1,7 +1,6 @@
 import { z } from 'zod';
+import { PROJECT_TYPES as CREATIVE_TYPES } from '../../config/domain.js';
 
-// Творческие типы — те же, что у проектов (PROJECT_TYPES на клиенте)
-export const CREATIVE_TYPES = ['art', 'music', 'video', 'photo', 'script', 'dev', 'other'];
 export const THEMES = ['light', 'dark', 'system'];
 
 const body = (shape) => z.object(shape, { error: 'Ожидается JSON-тело запроса' });

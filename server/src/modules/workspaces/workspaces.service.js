@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import { db } from '../../config/db.js';
+import { DEFAULT_CATEGORIES } from '../../config/domain.js';
 
 const PERSONAL_WORKSPACE_NAME = 'Личное пространство';
 
@@ -15,8 +16,18 @@ const personalSlug = (email) => {
   return `${base}-${crypto.randomBytes(4).toString('hex')}`;
 };
 
+/** Категории по умолчанию для нового пространства. */
+export const createDefaultCategories = (trx, workspaceId) =>
+  trx('categories').insert(
+    DEFAULT_CATEGORIES.map((category, position) => ({
+      ...category,
+      position,
+      workspace_id: workspaceId,
+    })),
+  );
+
 /**
- * Личное пространство + членство владельца.
+ * Личное пространство + членство владельца + категории по умолчанию.
  * Вызывается внутри транзакции регистрации (trx), чтобы всё создалось или ничего.
  */
 export const createPersonalWorkspace = async (trx, user) => {
@@ -34,6 +45,8 @@ export const createPersonalWorkspace = async (trx, user) => {
     user_id: user.id,
     role: 'owner',
   });
+
+  await createDefaultCategories(trx, workspace.id);
 
   return workspace;
 };
