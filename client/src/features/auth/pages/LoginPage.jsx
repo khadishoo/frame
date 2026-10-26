@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocation } from 'react-router';
-import { Mail } from 'lucide-react';
+import { Mail, Sparkles } from 'lucide-react';
 import * as authApi from '@/api/auth';
 import { Button, Input, PasswordInput } from '@/components/ui';
 import { useAuthStore } from '../authStore';
+import { DEMO_CREDENTIALS, demoLoginEnabled } from '../demo';
 import { AuthForm, AuthLink } from '../components/AuthForm';
 import { loginSchema } from '../schemas';
 import { applyServerError } from '../serverErrors';
@@ -13,6 +14,7 @@ import { applyServerError } from '../serverErrors';
 export default function LoginPage() {
   const location = useLocation();
   const [formError, setFormError] = useState(null);
+  const [demoPending, setDemoPending] = useState(false);
   const {
     register,
     handleSubmit,
@@ -24,7 +26,7 @@ export default function LoginPage() {
     mode: 'onTouched', // ошибка поля появляется после того, как из него ушли
   });
 
-  const onSubmit = handleSubmit(async (values) => {
+  const signIn = async (values) => {
     setFormError(null);
     try {
       const session = await authApi.login(values);
@@ -33,7 +35,18 @@ export default function LoginPage() {
     } catch (error) {
       setFormError(applyServerError(error, setError));
     }
-  });
+  };
+
+  const onSubmit = handleSubmit(signIn);
+
+  // Посмотреть Frame без регистрации — тот же вход, но с данными демо-аккаунта
+  const signInAsDemo = async () => {
+    setDemoPending(true);
+    await signIn(DEMO_CREDENTIALS);
+    setDemoPending(false);
+  };
+
+  const busy = isSubmitting || demoPending;
 
   return (
     <AuthForm
@@ -68,9 +81,29 @@ export default function LoginPage() {
         error={errors.password?.message}
         {...register('password')}
       />
-      <Button type="submit" size="lg" loading={isSubmitting} className="mt-2 w-full">
+      <Button
+        type="submit"
+        size="lg"
+        loading={isSubmitting}
+        disabled={busy}
+        className="mt-2 w-full"
+      >
         {isSubmitting ? 'Входим…' : 'Войти'}
       </Button>
+      {demoLoginEnabled && (
+        <Button
+          type="button"
+          variant="secondary"
+          size="lg"
+          leftIcon={<Sparkles />}
+          loading={demoPending}
+          disabled={busy}
+          onClick={signInAsDemo}
+          className="w-full"
+        >
+          Войти как демо
+        </Button>
+      )}
     </AuthForm>
   );
 }

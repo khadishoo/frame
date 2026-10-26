@@ -1,5 +1,6 @@
 import argon2 from 'argon2';
 import { db } from '../../config/db.js';
+import { DEMO_EMAIL } from '../../config/domain.js';
 import { AppError } from '../../utils/AppError.js';
 import { createSession, revokeAllSessions } from '../auth/sessions.js';
 
@@ -74,8 +75,15 @@ export const updateMe = async (userId, data) => {
  * (Refresh-cookie на /users/* не приходит, поэтому «текущую» сессию не отличить —
  * проще и надёжнее заменить её новой.)
  */
+const assertNotDemo = (user) => {
+  if (user.email === DEMO_EMAIL) {
+    throw new AppError(403, 'DEMO_ACCOUNT', 'В демо-аккаунте это недоступно — зарегистрируйтесь');
+  }
+};
+
 export const changePassword = async (userId, { currentPassword, newPassword }, meta) => {
   const user = await getExistingUser(userId);
+  assertNotDemo(user);
   await assertPassword(user, currentPassword, 'currentPassword');
 
   const passwordHash = await argon2.hash(newPassword);
@@ -104,6 +112,7 @@ const deleteUserCascade = (userId) =>
 /** Удаление аккаунта (с подтверждением паролем). */
 export const deleteMe = async (userId, { password }) => {
   const user = await getExistingUser(userId);
+  assertNotDemo(user);
   await assertPassword(user, password, 'password');
   await deleteUserCascade(userId);
 };

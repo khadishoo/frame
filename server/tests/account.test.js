@@ -166,3 +166,22 @@ describe('DELETE /users/me', () => {
     expect(await count('users')).toBe(1);
   });
 });
+
+describe('Демо-аккаунт', () => {
+  it('пароль не сменить и аккаунт не удалить — 403 DEMO_ACCOUNT, всё остаётся как было', async () => {
+    const demo = { ...validUser, email: 'demo@frame.local' };
+    const { body } = await registerUser(demo);
+
+    const change = await changePassword(body.accessToken, {
+      currentPassword: demo.password,
+      newPassword: NEW_PASSWORD,
+    });
+    expect(change.status).toBe(403);
+    expect(change.body.error.code).toBe('DEMO_ACCOUNT');
+
+    const remove = await deleteMe(body.accessToken, { password: demo.password });
+    expect(remove.status).toBe(403);
+    expect(await db('users').where({ email: demo.email }).first()).toBeDefined();
+    expect((await loginUser({ email: demo.email, password: demo.password })).status).toBe(200);
+  });
+});

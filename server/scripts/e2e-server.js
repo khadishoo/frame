@@ -1,7 +1,7 @@
 /**
  * API для E2E-тестов (Playwright): каждый запуск — с чистой базой *_e2e.
- * 1) пересоздаёт базу (DROP … WITH (FORCE) + CREATE), 2) применяет миграции,
- * 3) запускает обычный src/server.js с этой базой.
+ * 1) пересоздаёт базу (DROP … WITH (FORCE) + CREATE), 2) применяет миграции и сид
+ * (демо-аккаунт — для проверки «Войти как демо»), 3) запускает обычный src/server.js с этой базой.
  *
  * База: E2E_DATABASE_URL или DATABASE_URL из server/.env с именем базы frame_e2e.
  * Порт и адрес клиента задаёт playwright.config.js (PORT, CLIENT_URL).
@@ -42,9 +42,11 @@ const db = knex({
   client: 'pg',
   connection: url.toString(),
   migrations: { directory: path.join(serverRoot, 'src/db/migrations'), loadExtensions: ['.js'] },
+  seeds: { directory: path.join(serverRoot, 'src/db/seeds'), loadExtensions: ['.js'] },
 });
 try {
   await db.migrate.latest();
+  await db.seed.run();
 } finally {
   await db.destroy();
 }

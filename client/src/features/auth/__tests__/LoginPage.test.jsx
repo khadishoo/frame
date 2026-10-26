@@ -91,6 +91,21 @@ describe('LoginPage', () => {
     expect(window.localStorage.getItem('frame-session')).toBe('1');
   });
 
+  it('«Войти как демо» входит с демо-аккаунтом, не заполняя форму', async () => {
+    vi.mocked(authApi.login).mockResolvedValue({
+      user: { id: 'demo', name: 'Мира Соколова' },
+      accessToken: 'jwt',
+    });
+    const { user } = renderLogin();
+    await user.click(screen.getByRole('button', { name: 'Войти как демо' }));
+
+    await vi.waitFor(() => expect(useAuthStore.getState().status).toBe('authenticated'));
+    expect(authApi.login).toHaveBeenCalledWith({
+      email: 'demo@frame.local',
+      password: 'demo-password',
+    });
+  });
+
   it('кнопка «Показать пароль» меняет тип поля', async () => {
     const { user, password } = renderLogin();
     expect(password).toHaveAttribute('type', 'password');
