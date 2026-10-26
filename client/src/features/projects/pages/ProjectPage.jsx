@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import {
   Activity,
@@ -42,11 +42,16 @@ import {
 } from '../hooks/useProjects';
 import { FavoriteButton } from '@/features/favorites/components/FavoriteButton';
 import { ProjectNotes } from '@/features/notes/components/ProjectNotes';
-import { BoardView } from '@/features/tasks/components/BoardView';
+import { BoardSkeleton } from '@/features/tasks/components/BoardSkeleton';
 import { TaskTable } from '@/features/tasks/components/TaskTable';
 import { useTaskParam } from '@/features/tasks/hooks/useTaskParam';
 import { useCurrentWorkspace } from '@/features/workspaces/workspaceStore';
 import { useProjectModal } from '../projectModalStore';
+
+// Доска тянет за собой dnd-kit — грузим её, только когда открыта вкладка «Доска»
+const BoardView = lazy(() =>
+  import('@/features/tasks/components/BoardView').then((m) => ({ default: m.BoardView })),
+);
 
 const BackLink = () => (
   <Link
@@ -378,7 +383,9 @@ export default function ProjectPage() {
             content: (
               <>
                 {readOnly && <ReadOnlyNote archived={archived} />}
-                <BoardView projectId={project.id} readOnly={readOnly} onOpenTask={openTaskCard} />
+                <Suspense fallback={<BoardSkeleton />}>
+                  <BoardView projectId={project.id} readOnly={readOnly} onOpenTask={openTaskCard} />
+                </Suspense>
               </>
             ),
           },

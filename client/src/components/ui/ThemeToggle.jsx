@@ -1,5 +1,5 @@
 import { Monitor, Moon, Sun } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useId } from 'react';
 import { cn } from '@/lib/cn';
 import { useThemeStore } from '@/lib/theme';
@@ -62,7 +62,7 @@ export function ThemeToggle({ variant = 'segmented', showLabels = false, classNa
             )}
           >
             {checked && (
-              <motion.span
+              <m.span
                 layoutId={`${id}-theme`}
                 className="absolute inset-0 rounded-md bg-surface shadow-soft"
                 transition={{ type: 'spring', duration: 0.3, bounce: 0.15 }}

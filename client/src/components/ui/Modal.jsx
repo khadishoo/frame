@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
@@ -40,7 +40,7 @@ function ModalContent({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4">
-      <motion.div
+      <m.div
         className="absolute inset-0 bg-overlay/40 backdrop-blur-[2px]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -49,7 +49,7 @@ function ModalContent({
         onClick={closeOnBackdrop ? onClose : undefined}
         aria-hidden="true"
       />
-      <motion.div
+      <m.div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
@@ -99,7 +99,7 @@ function ModalContent({
             {footer}
           </div>
         )}
-      </motion.div>
+      </m.div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { CircleAlert, CircleCheck, Info, TriangleAlert, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useToastStore } from '@/lib/toast';
@@ -23,7 +23,7 @@ function ToastItem({ toast }) {
   }, [toast.id, toast.duration, dismiss]);
 
   return (
-    <motion.li
+    <m.li
       layout
       initial={{ opacity: 0, y: 16, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -57,7 +57,7 @@ function ToastItem({ toast }) {
       >
         <X className="size-4" aria-hidden="true" />
       </button>
-    </motion.li>
+    </m.li>
   );
 }
 

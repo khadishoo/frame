@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router';
 import { ArrowLeft } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Button, Logo, buttonVariants } from '@/components/ui';
 
 /** Общий вид для 404 и ошибок роутера: «пустой кадр». */
@@ -15,7 +15,7 @@ export function ErrorScreen({ code, title, description }) {
       </Link>
 
       <div className="flex flex-1 flex-col items-center justify-center gap-8 py-12 text-center">
-        <motion.div
+        <m.div
           className="relative flex h-40 w-56 items-center justify-center sm:h-48 sm:w-72"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -44,7 +44,7 @@ export function ErrorScreen({ code, title, description }) {
             <span className="size-1.5 animate-pulse rounded-full bg-danger" aria-hidden="true" />
             rec
           </span>
-        </motion.div>
+        </m.div>
 
         <div className="flex max-w-sm flex-col gap-2">
           <h1 className="text-xl font-semibold text-fg">{title}</h1>

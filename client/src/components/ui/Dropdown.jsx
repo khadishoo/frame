@@ -1,5 +1,5 @@
 import { cloneElement, useCallback, useId, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useClickOutside } from '@/hooks/useClickOutside';
@@ -103,7 +103,7 @@ export function Dropdown({ trigger, items, align = 'end', className, menuClassNa
       {triggerElement}
       <AnimatePresence>
         {open && (
-          <motion.div
+          <m.div
             ref={menuRef}
             id={menuId}
             role="menu"
@@ -163,7 +163,7 @@ export function Dropdown({ trigger, items, align = 'end', className, menuClassNa
                 </button>
               );
             })}
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

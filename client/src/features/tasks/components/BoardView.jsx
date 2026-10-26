@@ -19,7 +19,8 @@ import {
 } from '@dnd-kit/sortable';
 import { useReducedMotion } from 'framer-motion';
 import { Kanban, RotateCw } from 'lucide-react';
-import { Button, EmptyState, Skeleton } from '@/components/ui';
+import { Button, EmptyState } from '@/components/ui';
+import { BoardSkeleton } from './BoardSkeleton';
 import { cn } from '@/lib/cn';
 import { getErrorMessage } from '@/lib/getErrorMessage';
 import { TASK_STATUSES, TASK_STATUS_KEYS } from '@/lib/taskMeta';
@@ -146,20 +147,6 @@ function BoardColumn({ status, ids, tasksById, projectId, readOnly, onOpenTask }
 
       {!readOnly && <QuickAddTask projectId={projectId} status={status} />}
     </section>
-  );
-}
-
-function BoardSkeleton() {
-  return (
-    <div className="flex gap-3 overflow-hidden lg:grid lg:grid-cols-4" aria-hidden="true">
-      {TASK_STATUS_KEYS.map((status) => (
-        <div key={status} className="flex w-72 shrink-0 flex-col gap-2 lg:w-auto">
-          <Skeleton className="h-6 w-28" />
-          <Skeleton className="h-24" />
-          <Skeleton className="h-20" />
-        </div>
-      ))}
-    </div>
   );
 }
 

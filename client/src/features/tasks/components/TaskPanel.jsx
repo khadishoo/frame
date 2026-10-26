@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { SearchX, Trash2, X } from 'lucide-react';
 import {
   Button,
@@ -223,7 +223,7 @@ function PanelContent({ taskId, onClose }) {
 
   return (
     <div className="fixed inset-0 z-40 flex items-end justify-end sm:items-stretch">
-      <motion.div
+      <m.div
         className="absolute inset-0 bg-overlay/30"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -232,7 +232,7 @@ function PanelContent({ taskId, onClose }) {
         onClick={close}
         aria-hidden="true"
       />
-      <motion.aside
+      <m.aside
         ref={panelRef}
         role="dialog"
         aria-modal="true"
@@ -319,7 +319,7 @@ function PanelContent({ taskId, onClose }) {
             </Button>
           </footer>
         )}
-      </motion.aside>
+      </m.aside>
 
       {task && (
         <ConfirmDialog

@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import { ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { buttonVariants } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { PROJECT_TYPES, PROJECT_TYPE_KEYS } from '@/lib/projectTypes';
@@ -24,7 +24,7 @@ export default function LandingPage() {
       <title>Frame — пространство для творческих проектов</title>
 
       <section className="flex flex-col items-center gap-6 text-center">
-        <motion.ul className="flex flex-wrap justify-center gap-2" {...fadeUp()}>
+        <m.ul className="flex flex-wrap justify-center gap-2" {...fadeUp()}>
           {PROJECT_TYPE_KEYS.map((key) => {
             const { label, icon: Icon, soft, text } = PROJECT_TYPES[key];
             return (
@@ -40,24 +40,21 @@ export default function LandingPage() {
               </li>
             );
           })}
-        </motion.ul>
+        </m.ul>
 
-        <motion.h1
+        <m.h1
           className="max-w-3xl text-balance text-2xl font-semibold leading-tight text-fg sm:text-3xl"
           {...fadeUp(0.05)}
         >
           Все творческие проекты&nbsp;— в&nbsp;одной рамке
-        </motion.h1>
+        </m.h1>
 
-        <motion.p
-          className="max-w-xl text-balance text-base text-muted sm:text-lg"
-          {...fadeUp(0.1)}
-        >
+        <m.p className="max-w-xl text-balance text-base text-muted sm:text-lg" {...fadeUp(0.1)}>
           Рисунки, музыка, видео, фото, сценарии и код. Собирайте идеи, планируйте задачи и доводите
           начатое до конца.
-        </motion.p>
+        </m.p>
 
-        <motion.div className="flex flex-col gap-2 xs:flex-row" {...fadeUp(0.15)}>
+        <m.div className="flex flex-col gap-2 xs:flex-row" {...fadeUp(0.15)}>
           <Link to="/register" className={buttonVariants({ size: 'lg' })}>
             Начать бесплатно
             <ArrowRight />
@@ -65,10 +62,10 @@ export default function LandingPage() {
           <Link to="/login" className={buttonVariants({ variant: 'secondary', size: 'lg' })}>
             У меня есть аккаунт
           </Link>
-        </motion.div>
+        </m.div>
       </section>
 
-      <motion.ol className="mt-16 grid gap-3 sm:mt-24 sm:grid-cols-3 sm:gap-4" {...fadeUp(0.2)}>
+      <m.ol className="mt-16 grid gap-3 sm:mt-24 sm:grid-cols-3 sm:gap-4" {...fadeUp(0.2)}>
         {steps.map((step, index) => (
           <li
             key={step.title}
@@ -79,7 +76,7 @@ export default function LandingPage() {
             <p className="mt-1 text-sm text-muted">{step.text}</p>
           </li>
         ))}
-      </motion.ol>
+      </m.ol>
     </div>
   );
 }

@@ -1,30 +1,54 @@
+/* eslint-disable react-refresh/only-export-components -- карта маршрутов, а не компонент: lazy-страницы объявлены здесь же, горячая замена этому файлу не нужна */
+import { Suspense, lazy } from 'react';
 import { Navigate, createBrowserRouter } from 'react-router';
-import { AppLayout, AuthLayout, PublicLayout } from '@/components/layout';
-import AnalyticsPage from '@/features/analytics/pages/AnalyticsPage';
+import { AuthLayout, PageSkeleton, PublicLayout } from '@/components/layout';
 import { GuestRoute } from '@/features/auth/components/GuestRoute';
 import { ProtectedRoute } from '@/features/auth/components/ProtectedRoute';
-import ForgotPasswordPage from '@/features/auth/pages/ForgotPasswordPage';
-import LoginPage from '@/features/auth/pages/LoginPage';
-import RegisterPage from '@/features/auth/pages/RegisterPage';
-import CalendarPage from '@/features/calendar/pages/CalendarPage';
-import DashboardPage from '@/features/dashboard/pages/DashboardPage';
-import FavoritesPage from '@/features/favorites/pages/FavoritesPage';
-import LandingPage from '@/features/landing/pages/LandingPage';
-import IdeasPage from '@/features/notes/pages/IdeasPage';
-import OnboardingPage from '@/features/onboarding/pages/OnboardingPage';
-import NotificationsPage from '@/features/notifications/pages/NotificationsPage';
-import ProjectPage from '@/features/projects/pages/ProjectPage';
-import ProjectsPage from '@/features/projects/pages/ProjectsPage';
+import { SplashScreen } from '@/features/auth/components/SplashScreen';
 import { SettingsLayout } from '@/features/settings/components/SettingsLayout';
-import AccountSettingsPage from '@/features/settings/pages/AccountSettingsPage';
-import AppearanceSettingsPage from '@/features/settings/pages/AppearanceSettingsPage';
-import LabelsSettingsPage from '@/features/settings/pages/LabelsSettingsPage';
-import ProfileSettingsPage from '@/features/settings/pages/ProfileSettingsPage';
-import MyTasksPage from '@/features/tasks/pages/MyTasksPage';
-import InvitePage from '@/features/workspace/pages/InvitePage';
-import WorkspaceSettingsPage from '@/features/workspace/pages/WorkspaceSettingsPage';
 import NotFoundPage from './NotFoundPage';
 import RouteErrorPage from './RouteErrorPage';
+
+// Каждая страница — отдельный чанк: код грузится, только когда её открыли.
+// Пока чанк едет — скелетон в форме страницы (у входа/регистрации — в форме формы).
+// Каркас приложения (сайдбар, топбар, окна проекта/задачи/идеи с формами) лендингу и входу
+// не нужен — он приезжает, только когда открыли /app.
+const AppLayout = lazy(() =>
+  import('@/components/layout/AppLayout').then((m) => ({ default: m.AppLayout })),
+);
+const AnalyticsPage = lazy(() => import('@/features/analytics/pages/AnalyticsPage'));
+const ForgotPasswordPage = lazy(() => import('@/features/auth/pages/ForgotPasswordPage'));
+const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'));
+const RegisterPage = lazy(() => import('@/features/auth/pages/RegisterPage'));
+const CalendarPage = lazy(() => import('@/features/calendar/pages/CalendarPage'));
+const DashboardPage = lazy(() => import('@/features/dashboard/pages/DashboardPage'));
+const FavoritesPage = lazy(() => import('@/features/favorites/pages/FavoritesPage'));
+const LandingPage = lazy(() => import('@/features/landing/pages/LandingPage'));
+const IdeaEditorPage = lazy(() => import('@/features/notes/pages/IdeaEditorPage'));
+const IdeasPage = lazy(() => import('@/features/notes/pages/IdeasPage'));
+const OnboardingPage = lazy(() => import('@/features/onboarding/pages/OnboardingPage'));
+const NotificationsPage = lazy(() => import('@/features/notifications/pages/NotificationsPage'));
+const ProjectPage = lazy(() => import('@/features/projects/pages/ProjectPage'));
+const ProjectsPage = lazy(() => import('@/features/projects/pages/ProjectsPage'));
+const AccountSettingsPage = lazy(() => import('@/features/settings/pages/AccountSettingsPage'));
+const AppearanceSettingsPage = lazy(
+  () => import('@/features/settings/pages/AppearanceSettingsPage'),
+);
+const LabelsSettingsPage = lazy(() => import('@/features/settings/pages/LabelsSettingsPage'));
+const ProfileSettingsPage = lazy(() => import('@/features/settings/pages/ProfileSettingsPage'));
+const MyTasksPage = lazy(() => import('@/features/tasks/pages/MyTasksPage'));
+const InvitePage = lazy(() => import('@/features/workspace/pages/InvitePage'));
+const WorkspaceSettingsPage = lazy(
+  () => import('@/features/workspace/pages/WorkspaceSettingsPage'),
+);
+
+function page(Component, variant = 'app') {
+  return (
+    <Suspense fallback={<PageSkeleton variant={variant} />}>
+      <Component />
+    </Suspense>
+  );
+}
 
 // Витрина UI-кита только в dev: в production-сборку этот код не попадает
 const devRoutes = import.meta.env.DEV
@@ -45,7 +69,7 @@ export const router = createBrowserRouter([
     children: [
       {
         element: <PublicLayout />,
-        children: [{ path: '/', element: <LandingPage /> }],
+        children: [{ path: '/', element: page(LandingPage) }],
       },
       {
         element: <AuthLayout />,
@@ -53,12 +77,12 @@ export const router = createBrowserRouter([
           {
             element: <GuestRoute />,
             children: [
-              { path: '/login', element: <LoginPage /> },
-              { path: '/register', element: <RegisterPage /> },
+              { path: '/login', element: page(LoginPage, 'form') },
+              { path: '/register', element: page(RegisterPage, 'form') },
             ],
           },
-          { path: '/forgot-password', element: <ForgotPasswordPage /> },
-          { path: '/invite/:token', element: <InvitePage /> },
+          { path: '/forgot-password', element: page(ForgotPasswordPage, 'form') },
+          { path: '/invite/:token', element: page(InvitePage, 'form') },
         ],
       },
       {
@@ -66,38 +90,37 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute />,
         children: [
           // Онбординг — без сайдбара и топбара
-          { path: 'onboarding', element: <OnboardingPage /> },
+          { path: 'onboarding', element: page(OnboardingPage, 'form') },
           {
-            element: <AppLayout />,
+            element: (
+              <Suspense fallback={<SplashScreen />}>
+                <AppLayout />
+              </Suspense>
+            ),
             children: [
-              { index: true, element: <DashboardPage /> },
-              { path: 'projects', element: <ProjectsPage /> },
-              { path: 'projects/:id', element: <ProjectPage /> },
-              { path: 'tasks', element: <MyTasksPage /> },
-              { path: 'calendar', element: <CalendarPage /> },
-              { path: 'ideas', element: <IdeasPage /> },
-              {
-                path: 'ideas/:id',
-                // Лениво: Markdown-библиотеки (~190 КБ) грузятся, только когда открыли идею
-                lazy: async () => ({
-                  Component: (await import('@/features/notes/pages/IdeaEditorPage')).default,
-                }),
-              },
-              { path: 'favorites', element: <FavoritesPage /> },
-              { path: 'analytics', element: <AnalyticsPage /> },
-              { path: 'notifications', element: <NotificationsPage /> },
+              { index: true, element: page(DashboardPage) },
+              { path: 'projects', element: page(ProjectsPage) },
+              { path: 'projects/:id', element: page(ProjectPage) },
+              { path: 'tasks', element: page(MyTasksPage) },
+              { path: 'calendar', element: page(CalendarPage) },
+              { path: 'ideas', element: page(IdeasPage) },
+              // Markdown-библиотеки (~170 КБ) приезжают вместе с этим чанком — только в редакторе
+              { path: 'ideas/:id', element: page(IdeaEditorPage) },
+              { path: 'favorites', element: page(FavoritesPage) },
+              { path: 'analytics', element: page(AnalyticsPage) },
+              { path: 'notifications', element: page(NotificationsPage) },
               {
                 path: 'settings',
                 element: <SettingsLayout />,
                 children: [
                   { index: true, element: <Navigate to="profile" replace /> },
-                  { path: 'profile', element: <ProfileSettingsPage /> },
-                  { path: 'account', element: <AccountSettingsPage /> },
-                  { path: 'appearance', element: <AppearanceSettingsPage /> },
-                  { path: 'labels', element: <LabelsSettingsPage /> },
+                  { path: 'profile', element: page(ProfileSettingsPage) },
+                  { path: 'account', element: page(AccountSettingsPage) },
+                  { path: 'appearance', element: page(AppearanceSettingsPage) },
+                  { path: 'labels', element: page(LabelsSettingsPage) },
                 ],
               },
-              { path: 'workspace/settings', element: <WorkspaceSettingsPage /> },
+              { path: 'workspace/settings', element: page(WorkspaceSettingsPage) },
             ],
           },
         ],

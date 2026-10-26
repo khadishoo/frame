@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { KeyRound, Palette, Tags, User } from 'lucide-react';
 import { PageHeader } from '@/components/layout';
 import { cn } from '@/lib/cn';
@@ -41,7 +41,7 @@ export function SettingsLayout() {
                     <Icon className="size-4" aria-hidden="true" />
                     {label}
                     {isActive && (
-                      <motion.span
+                      <m.span
                         layoutId="settings-tab"
                         className="absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-accent"
                         transition={{ type: 'spring', duration: 0.3, bounce: 0.15 }}

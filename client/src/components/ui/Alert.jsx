@@ -1,5 +1,5 @@
 import { CircleAlert, CircleCheck, Info, TriangleAlert } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { cn } from '@/lib/cn';
 
 const variants = {
@@ -17,7 +17,7 @@ export function Alert({ variant = 'info', title, children, className }) {
   const { Icon, className: tone } = variants[variant];
 
   return (
-    <motion.div
+    <m.div
       role={variant === 'danger' ? 'alert' : 'status'}
       initial={{ opacity: 0, y: -4 }}
       animate={{ opacity: 1, y: 0 }}
@@ -33,6 +33,6 @@ export function Alert({ variant = 'info', title, children, className }) {
         {title && <p className="font-medium">{title}</p>}
         {children && <div className={cn(title && 'text-fg/80')}>{children}</div>}
       </div>
-    </motion.div>
+    </m.div>
   );
 }

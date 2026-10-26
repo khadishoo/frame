@@ -1,5 +1,5 @@
 import { Link, Outlet } from 'react-router';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Logo, ThemeToggle } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { PROJECT_TYPES, PROJECT_TYPE_KEYS } from '@/lib/projectTypes';
@@ -39,7 +39,7 @@ function BrandPanel() {
           {PROJECT_TYPE_KEYS.map((key, index) => {
             const { label, icon: Icon, soft, text } = PROJECT_TYPES[key];
             return (
-              <motion.li
+              <m.li
                 key={key}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -53,7 +53,7 @@ function BrandPanel() {
                   <Icon className={cn('size-4', text)} />
                 </span>
                 <span className="text-sm font-medium text-fg">{label}</span>
-              </motion.li>
+              </m.li>
             );
           })}
         </ul>

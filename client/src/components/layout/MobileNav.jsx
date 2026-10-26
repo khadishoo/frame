@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { NavLink } from 'react-router';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
@@ -16,7 +16,7 @@ function DrawerPanel({ onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 md:hidden">
-      <motion.div
+      <m.div
         className="absolute inset-0 bg-overlay/40 backdrop-blur-[2px]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -25,7 +25,7 @@ function DrawerPanel({ onClose }) {
         onClick={onClose}
         aria-hidden="true"
       />
-      <motion.div
+      <m.div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
@@ -52,7 +52,7 @@ function DrawerPanel({ onClose }) {
           <span className="text-sm text-muted">Тема</span>
           <ThemeToggle />
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

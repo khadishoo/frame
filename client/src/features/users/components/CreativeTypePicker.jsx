@@ -1,5 +1,5 @@
 import { Check } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { cn } from '@/lib/cn';
 import { PROJECT_TYPES, PROJECT_TYPE_KEYS } from '@/lib/projectTypes';
 
@@ -17,7 +17,7 @@ function TypeCard({ type, selected, onToggle, index }) {
   const { label, icon: Icon, soft, text, dot } = PROJECT_TYPES[type];
 
   return (
-    <motion.button
+    <m.button
       type="button"
       aria-pressed={selected}
       onClick={onToggle}
@@ -52,7 +52,7 @@ function TypeCard({ type, selected, onToggle, index }) {
       >
         <Check className="size-3 text-bg" strokeWidth={3} />
       </span>
-    </motion.button>
+    </m.button>
   );
 }
 

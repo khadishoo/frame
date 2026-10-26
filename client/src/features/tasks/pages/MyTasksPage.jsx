@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
+import { AnimatePresence, LayoutGroup, m } from 'framer-motion';
 import { ListChecks, PartyPopper, RotateCw } from 'lucide-react';
 import { PageHeader } from '@/components/layout';
 import { Button, Checkbox, EmptyState, Skeleton, buttonVariants } from '@/components/ui';
@@ -20,7 +20,7 @@ function MyTaskItem({ task, readOnly, onToggle, onOpen }) {
   const done = task.status === 'done';
   const type = PROJECT_TYPES[task.project?.type] ?? PROJECT_TYPES.other;
   return (
-    <motion.li
+    <m.li
       layout="position"
       layoutId={task.id}
       initial={{ opacity: 0 }}
@@ -63,7 +63,7 @@ function MyTaskItem({ task, readOnly, onToggle, onOpen }) {
           <TaskDue task={task} />
         </div>
       </div>
-    </motion.li>
+    </m.li>
   );
 }
 

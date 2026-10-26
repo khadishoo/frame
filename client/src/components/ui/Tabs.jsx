@@ -1,5 +1,5 @@
 import { useId, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { cn } from '@/lib/cn';
 
 /**
@@ -81,7 +81,7 @@ export function Tabs({
               )}
             >
               {selected && (
-                <motion.span
+                <m.span
                   layoutId={`${baseId}-indicator`}
                   className={cn(
                     'absolute',
