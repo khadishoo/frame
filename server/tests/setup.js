@@ -12,7 +12,7 @@ if (!dbName.endsWith('_test')) {
 beforeEach(async () => {
   // Новую таблицу — добавить сюда (CASCADE подчистит и зависимые, но явно — понятнее)
   await db.raw(
-    'TRUNCATE users, refresh_tokens, workspaces, workspace_members, categories, tags, projects, project_tags CASCADE',
+    'TRUNCATE users, refresh_tokens, workspaces, workspace_members, categories, tags, projects, project_tags, tasks CASCADE',
   );
   await resetRateLimits();
 });

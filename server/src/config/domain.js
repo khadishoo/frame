@@ -8,6 +8,11 @@ export const PROJECT_TYPES = ['art', 'music', 'video', 'photo', 'script', 'dev',
 // Рабочее состояние проекта; архив — отдельно, полем archived_at
 export const PROJECT_STATUSES = ['idea', 'active', 'paused', 'completed'];
 
+// Колонки доски задач — в порядке слева направо
+export const TASK_STATUSES = ['todo', 'in_progress', 'review', 'done'];
+
+export const TASK_PRIORITIES = ['low', 'medium', 'high', 'urgent'];
+
 export const VISIBILITIES = ['private', 'workspace', 'public'];
 
 // Палитра категорий, тегов и проектов (клиент подбирает оттенок под тему)

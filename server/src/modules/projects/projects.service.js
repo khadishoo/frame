@@ -48,22 +48,17 @@ const toProject = (row, { tags = [], counts = { total: 0, done: 0 } } = {}) => (
   taskCounts: counts,
 });
 
-// ── Задачи (этап 7) ─────────────────────────────────────────────────────────
-// Запрос уже готов; пока таблицы tasks нет, счётчики — нули.
-let tasksTableExists;
-const countTasks = async (projectIds) => {
+/** Счётчики задач (всего / выполнено) для набора проектов — одним запросом. */
+const countTasks = async (projectIds, trx = db) => {
   const counts = new Map();
   if (projectIds.length === 0) return counts;
 
-  tasksTableExists ??= await db.schema.hasTable('tasks');
-  if (!tasksTableExists) return counts;
-
-  const rows = await db('tasks')
+  const rows = await trx('tasks')
     .whereIn('project_id', projectIds)
     .groupBy('project_id')
     .select('project_id')
     .count({ total: '*' })
-    .select(db.raw("count(*) filter (where status = 'done') as done"));
+    .select(trx.raw("count(*) filter (where status = 'done') as done"));
   for (const row of rows) {
     counts.set(row.project_id, { total: Number(row.total), done: Number(row.done) });
   }
@@ -87,7 +82,7 @@ const loadTags = async (projectIds, trx = db) => {
 /** Строки проектов → ответ API с категорией, тегами и счётчиками задач. */
 const withRelations = async (rows, trx = db) => {
   const ids = rows.map((row) => row.id);
-  const [tags, counts] = await Promise.all([loadTags(ids, trx), countTasks(ids)]);
+  const [tags, counts] = await Promise.all([loadTags(ids, trx), countTasks(ids, trx)]);
   return rows.map((row) =>
     toProject(row, { tags: tags.get(row.id), counts: counts.get(row.id) ?? { total: 0, done: 0 } }),
   );

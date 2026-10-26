@@ -18,19 +18,38 @@ export const getMembership = async (workspaceId, userId, trx = db) => {
 };
 
 /**
- * Найти запись (проект, категорию, тег) только в пространствах, где пользователь участник.
- * Чужая запись для него «не существует» → 404 (не раскрываем, что она есть).
+ * Записи без своего workspace_id: пространство берём у родителя.
+ * Задача → её проект (заодно отдаём workspace_id и признак архива проекта).
+ */
+const PARENT_SCOPES = {
+  tasks: {
+    join: ['projects as p', 'p.id', 'r.project_id'],
+    workspaceColumn: 'p.workspace_id',
+    columns: ['p.workspace_id', 'p.archived_at as project_archived_at'],
+  },
+};
+
+/**
+ * Найти запись (проект, категорию, тег, задачу) только в пространствах, где пользователь
+ * участник. Чужая запись для него «не существует» → 404 (не раскрываем, что она есть).
  * Возвращает { record, membership }.
  */
 export const findAccessible = async (table, id, userId, notFoundMessage, trx = db) => {
   if (!isUuid(id)) throw AppError.notFound(notFoundMessage);
 
-  const row = await trx(`${table} as r`)
+  const scope = PARENT_SCOPES[table];
+  const query = trx(`${table} as r`);
+  if (scope) query.join(...scope.join);
+
+  const row = await query
     .join('workspace_members as m', function joinMembership() {
-      this.on('m.workspace_id', 'r.workspace_id').andOnVal('m.user_id', userId);
+      this.on('m.workspace_id', scope?.workspaceColumn ?? 'r.workspace_id').andOnVal(
+        'm.user_id',
+        userId,
+      );
     })
     .where('r.id', id)
-    .first('r.*', 'm.role as member_role');
+    .first('r.*', ...(scope?.columns ?? []), 'm.role as member_role');
 
   if (!row) throw AppError.notFound(notFoundMessage);
 
@@ -58,7 +77,7 @@ export const loadWorkspace = async (req, res, next) => {
 };
 
 /**
- * Middleware: /:id ресурса (проект, категория, тег). Проверяет, что запись из пространства
+ * Middleware: /:id ресурса (проект, категория, тег, задача). Проверяет, что запись из пространства
  * пользователя; кладёт req.record и req.membership.
  */
 export const loadRecord = (table, notFoundMessage) => async (req, res, next) => {

@@ -3,6 +3,7 @@ import { loadWorkspace } from '../../middleware/access.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
 import { categoryRouters, tagRouters } from '../labels/labels.routes.js';
 import { workspaceProjectsRouter } from '../projects/projects.routes.js';
+import { workspaceTasksRouter } from '../tasks/tasks.routes.js';
 import { listUserWorkspaces } from './workspaces.service.js';
 
 export const workspacesRouter = Router();
@@ -21,5 +22,6 @@ workspaceRouter.use(loadWorkspace);
 workspaceRouter.use('/projects', workspaceProjectsRouter);
 workspaceRouter.use('/categories', categoryRouters.collection);
 workspaceRouter.use('/tags', tagRouters.collection);
+workspaceRouter.use('/tasks', workspaceTasksRouter);
 
 workspacesRouter.use('/:wsId', workspaceRouter);

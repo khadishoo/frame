@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { loadRecord, requireRole } from '../../middleware/access.js';
 import { validate } from '../../middleware/validate.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
+import { projectTasksRouter } from '../tasks/tasks.routes.js';
 import * as projectsController from './projects.controller.js';
 import {
   createProjectSchema,
@@ -29,6 +30,7 @@ workspaceProjectsRouter.post(
 export const projectsRouter = Router();
 
 projectsRouter.use('/:id', loadRecord('projects', 'Проект не найден'));
+projectsRouter.use('/:id/tasks', projectTasksRouter);
 
 projectsRouter.get('/:id', asyncHandler(projectsController.get));
 projectsRouter.patch(
