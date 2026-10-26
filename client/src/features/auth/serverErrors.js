@@ -1,3 +1,5 @@
+import { isConnectionError } from '@/lib/getErrorMessage';
+
 /**
  * Превращает ошибку API в понятный текст и, где можно, привязывает её к полю формы.
  * Возвращает сообщение для всей формы (или null, если ошибка показана у поля).
@@ -6,7 +8,8 @@ export const applyServerError = (error, setError) => {
   const status = error?.response?.status;
   const apiError = error?.response?.data?.error;
 
-  if (!error?.response) {
+  // Ответа нет или вместо API ответил прокси (502/504 без нашего { error })
+  if (isConnectionError(error)) {
     return 'Нет соединения с сервером. Проверьте интернет и попробуйте снова';
   }
 

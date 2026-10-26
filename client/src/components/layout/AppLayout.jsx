@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router';
+import { ErrorState } from '@/components/ui';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
 import { QuickIdeaModal } from '@/features/notes/components/QuickIdeaModal';
 import { ProjectFormModal } from '@/features/projects/components/ProjectFormModal';
 import { TaskPanel } from '@/features/tasks/components/TaskPanel';
+import { useWorkspaces } from '@/features/workspaces/workspaceStore';
 import { MobileDrawer, MobileTabBar } from './MobileNav';
 
 /**
@@ -14,6 +16,10 @@ import { MobileDrawer, MobileTabBar } from './MobileNav';
  */
 export function AppLayout() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  // Без пространства ни один запрос страниц не стартует (enabled: workspaceId) —
+  // если список не загрузился, говорим об этом, а не показываем вечный скелетон
+  const workspaces = useWorkspaces();
+  const workspacesFailed = workspaces.isError && !workspaces.data;
 
   return (
     <div className="min-h-dvh bg-bg">
@@ -31,7 +37,17 @@ export function AppLayout() {
         <Topbar onMenuClick={() => setDrawerOpen(true)} />
         <main id="main" className="flex-1 px-4 pb-28 pt-6 sm:px-6 md:pb-10 lg:px-8 lg:pt-8">
           <div className="mx-auto w-full max-w-6xl">
-            <Outlet />
+            {workspacesFailed ? (
+              <ErrorState
+                title="Не удалось загрузить пространство"
+                error={workspaces.error}
+                onRetry={workspaces.refetch}
+                retrying={workspaces.isRefetching}
+                className="mt-6"
+              />
+            ) : (
+              <Outlet />
+            )}
           </div>
         </main>
       </div>

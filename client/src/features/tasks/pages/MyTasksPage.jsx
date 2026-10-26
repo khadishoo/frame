@@ -1,8 +1,8 @@
 import { Link } from 'react-router';
 import { AnimatePresence, LayoutGroup, m } from 'framer-motion';
-import { ListChecks, PartyPopper, RotateCw } from 'lucide-react';
+import { ListChecks, PartyPopper } from 'lucide-react';
 import { PageHeader } from '@/components/layout';
-import { Button, Checkbox, EmptyState, Skeleton, buttonVariants } from '@/components/ui';
+import { Checkbox, EmptyState, ErrorState, Skeleton, buttonVariants } from '@/components/ui';
 import { useCurrentWorkspace } from '@/features/workspaces/workspaceStore';
 import { cn } from '@/lib/cn';
 import { getErrorMessage } from '@/lib/getErrorMessage';
@@ -121,20 +121,11 @@ export default function MyTasksPage() {
     content = <MyTasksSkeleton />;
   } else if (error) {
     content = (
-      <EmptyState
-        icon={ListChecks}
+      <ErrorState
         title="Не удалось загрузить задачи"
-        description={getErrorMessage(error)}
-        action={
-          <Button
-            variant="secondary"
-            leftIcon={<RotateCw />}
-            onClick={() => refetch()}
-            loading={isRefetching}
-          >
-            Повторить
-          </Button>
-        }
+        error={error}
+        onRetry={refetch}
+        retrying={isRefetching}
       />
     );
   } else if (groups.length === 0) {

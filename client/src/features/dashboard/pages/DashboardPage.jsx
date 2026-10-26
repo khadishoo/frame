@@ -11,7 +11,7 @@ import {
   Rocket,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout';
-import { Button, EmptyState, Skeleton, buttonVariants } from '@/components/ui';
+import { Button, ErrorState, Skeleton, buttonVariants } from '@/components/ui';
 import { useAuthStore } from '@/features/auth/authStore';
 import { NoteCard } from '@/features/notes/components/NoteCard';
 import { useQuickIdea } from '@/features/notes/quickIdeaStore';
@@ -20,7 +20,6 @@ import { useProjectModal } from '@/features/projects/projectModalStore';
 import { PriorityBadge, TaskDue } from '@/features/tasks/components/TaskBits';
 import { useTaskParam } from '@/features/tasks/hooks/useTaskParam';
 import { cn } from '@/lib/cn';
-import { getErrorMessage } from '@/lib/getErrorMessage';
 import { plural } from '@/lib/dates';
 import { PROJECT_TYPES } from '@/lib/projectTypes';
 import { ActivityChart } from '../components/ActivityChart';
@@ -263,16 +262,17 @@ function DashboardSkeleton() {
 
 export default function DashboardPage() {
   const name = useAuthStore((s) => s.user?.name);
-  const { data, isPending, error } = useDashboard();
+  const { data, isPending, error, refetch, isRefetching } = useDashboard();
 
   let content;
   if (isPending) content = <DashboardSkeleton />;
   else if (error) {
     content = (
-      <EmptyState
-        icon={FolderKanban}
+      <ErrorState
         title="Не удалось загрузить сводку"
-        description={getErrorMessage(error)}
+        error={error}
+        onRetry={refetch}
+        retrying={isRefetching}
       />
     );
   } else {

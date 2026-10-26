@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import { Button, ConfirmDialog, Dropdown, EmptyState, Skeleton } from '@/components/ui';
+import { Button, ConfirmDialog, Dropdown, EmptyState, ErrorState, Skeleton } from '@/components/ui';
 import { applyServerError } from '@/features/auth/serverErrors';
 import { cn } from '@/lib/cn';
 import { plural } from '@/lib/dates';
@@ -128,7 +128,7 @@ function EditableName({ value, onSave, prefix = '' }) {
  * Управление категориями или тегами: список со счётчиком проектов, переименование,
  * цвет, удаление и создание новой метки.
  */
-export function LabelManager({ kind, labels, isPending, texts }) {
+export function LabelManager({ kind, labels, isPending, error, onRetry, retrying, texts }) {
   const { create, update, remove } = useLabelMutations(kind);
   const [newName, setNewName] = useState('');
   const [createError, setCreateError] = useState(null);
@@ -162,6 +162,8 @@ export function LabelManager({ kind, labels, isPending, texts }) {
             <Skeleton key={i} className="h-10 w-full" />
           ))}
         </div>
+      ) : error ? (
+        <ErrorState title={texts.loadError} error={error} onRetry={onRetry} retrying={retrying} />
       ) : labels.length === 0 ? (
         <EmptyState icon={texts.emptyIcon} title={texts.emptyTitle} description={texts.emptyText} />
       ) : (

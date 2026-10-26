@@ -1,10 +1,9 @@
 import { Link } from 'react-router';
 import { Star } from 'lucide-react';
 import { PageHeader } from '@/components/layout';
-import { EmptyState, Skeleton, buttonVariants } from '@/components/ui';
+import { EmptyState, ErrorState, Skeleton, buttonVariants } from '@/components/ui';
 import { NoteCard } from '@/features/notes/components/NoteCard';
 import { ProjectCard } from '@/features/projects/components/ProjectCard';
-import { getErrorMessage } from '@/lib/getErrorMessage';
 import { useFavorites } from '../hooks/useFavorites';
 
 function Section({ title, count, children }) {
@@ -23,7 +22,7 @@ function Section({ title, count, children }) {
 
 /** «Избранное»: проекты и идеи со звёздочкой — последние отмеченные первыми. */
 export default function FavoritesPage() {
-  const { data, isPending, error } = useFavorites();
+  const { data, isPending, error, refetch, isRefetching } = useFavorites();
   const projects = data?.projects ?? [];
   const notes = data?.notes ?? [];
 
@@ -38,10 +37,11 @@ export default function FavoritesPage() {
     );
   } else if (error) {
     content = (
-      <EmptyState
-        icon={Star}
+      <ErrorState
         title="Не удалось загрузить избранное"
-        description={getErrorMessage(error)}
+        error={error}
+        onRetry={refetch}
+        retrying={isRefetching}
       />
     );
   } else if (projects.length === 0 && notes.length === 0) {

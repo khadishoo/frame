@@ -1,13 +1,12 @@
 import { Plus, StickyNote } from 'lucide-react';
-import { Button, EmptyState, Skeleton } from '@/components/ui';
-import { getErrorMessage } from '@/lib/getErrorMessage';
+import { Button, EmptyState, ErrorState, Skeleton } from '@/components/ui';
 import { useNotes } from '../hooks/useNotes';
 import { useQuickIdea } from '../quickIdeaStore';
 import { NoteCard } from './NoteCard';
 
 /** Вкладка «Заметки» на странице проекта: идеи, привязанные к проекту. */
 export function ProjectNotes({ projectId, readOnly }) {
-  const { data, isPending, error } = useNotes({ projectId });
+  const { data, isPending, error, refetch, isRefetching } = useNotes({ projectId });
   const openQuickIdea = useQuickIdea((s) => s.openQuickIdea);
   const notes = data?.items ?? [];
 
@@ -21,10 +20,11 @@ export function ProjectNotes({ projectId, readOnly }) {
   }
   if (error) {
     return (
-      <EmptyState
-        icon={StickyNote}
+      <ErrorState
         title="Не удалось загрузить заметки"
-        description={getErrorMessage(error)}
+        error={error}
+        onRetry={refetch}
+        retrying={isRefetching}
       />
     );
   }

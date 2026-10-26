@@ -15,6 +15,7 @@ import {
   ConfirmDialog,
   Dropdown,
   EmptyState,
+  ErrorState,
   Modal,
   SaveStatus,
   Select,
@@ -373,7 +374,7 @@ function NoteEditor({ note, readOnly }) {
 
 export default function IdeaEditorPage() {
   const { id } = useParams();
-  const { data: note, isPending, error } = useNote(id);
+  const { data: note, isPending, error, refetch, isRefetching } = useNote(id);
   const { workspace } = useCurrentWorkspace();
 
   if (isPending) {
@@ -386,24 +387,30 @@ export default function IdeaEditorPage() {
     );
   }
   if (error) {
-    const notFound = error.response?.status === 404;
+    const toIdeas = (
+      <Link to="/app/ideas" className={buttonVariants({ variant: 'secondary' })}>
+        Ко всем идеям
+      </Link>
+    );
     return (
       <>
         <BackLink />
-        <EmptyState
-          icon={NotebookPen}
-          title={notFound ? 'Идея не найдена' : 'Не удалось открыть идею'}
-          description={
-            notFound
-              ? 'Возможно, её удалили или ссылка ведёт в чужое пространство.'
-              : getErrorMessage(error)
-          }
-          action={
-            <Link to="/app/ideas" className={buttonVariants({ variant: 'secondary' })}>
-              Ко всем идеям
-            </Link>
-          }
-        />
+        {error.response?.status === 404 ? (
+          <EmptyState
+            icon={NotebookPen}
+            title="Идея не найдена"
+            description="Возможно, её удалили или ссылка ведёт в чужое пространство."
+            action={toIdeas}
+          />
+        ) : (
+          <ErrorState
+            title="Не удалось открыть идею"
+            error={error}
+            onRetry={refetch}
+            retrying={isRefetching}
+            action={toIdeas}
+          />
+        )}
       </>
     );
   }

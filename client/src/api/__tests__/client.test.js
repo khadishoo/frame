@@ -3,6 +3,7 @@ import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { login } from '@/api/auth';
 import { apiClient } from '@/api/client';
 import { useAuthStore } from '@/features/auth/authStore';
+import { useToastStore } from '@/lib/toast';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -93,5 +94,48 @@ describe('apiClient: 401 → refresh → повтор запроса', () => {
 
     expect(res.status).toBe(200);
     expect(refreshCalls).toBe(0);
+  });
+});
+
+describe('apiClient: нет соединения с сервером', () => {
+  beforeEach(() => {
+    useToastStore.setState({ toasts: [] });
+  });
+
+  afterAll(() => {
+    apiClient.defaults.adapter = originalAdapter;
+  });
+
+  const offlineToasts = () =>
+    useToastStore.getState().toasts.filter((t) => t.title === 'Нет соединения с сервером');
+
+  it('сеть недоступна → один тост на сколько угодно упавших запросов', async () => {
+    apiClient.defaults.adapter = async (config) => {
+      throw new AxiosError('Network Error', 'ERR_NETWORK', config, {});
+    };
+
+    await Promise.allSettled([apiClient.get('/a'), apiClient.get('/b'), apiClient.get('/c')]);
+    expect(offlineToasts()).toHaveLength(1);
+
+    // Тост закрыли, связь всё ещё не вернулась — покажем снова
+    useToastStore.setState({ toasts: [] });
+    await apiClient.get('/d').catch(() => {});
+    expect(offlineToasts()).toHaveLength(1);
+  });
+
+  it('прокси вернул 502 без нашего { error } — тоже «нет соединения»', async () => {
+    apiClient.defaults.adapter = async (config) => respond(config, 502, '');
+    await apiClient.get('/a').catch(() => {});
+    expect(offlineToasts()).toHaveLength(1);
+  });
+
+  it('обычные ошибки API и отменённые запросы тост не вызывают', async () => {
+    apiClient.defaults.adapter = async (config) => {
+      if (config.url === '/cancel') throw new AxiosError('canceled', 'ERR_CANCELED', config);
+      return respond(config, 500, { error: { code: 'INTERNAL', message: 'Ошибка' } });
+    };
+    useAuthStore.setState({ accessToken: 'new-token' });
+    await Promise.allSettled([apiClient.get('/a'), apiClient.get('/cancel')]);
+    expect(offlineToasts()).toHaveLength(0);
   });
 });

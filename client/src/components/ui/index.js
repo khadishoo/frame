@@ -8,6 +8,7 @@ export { Checkbox } from './Checkbox';
 export { ConfirmDialog } from './ConfirmDialog';
 export { Dropdown } from './Dropdown';
 export { EmptyState } from './EmptyState';
+export { ErrorState } from './ErrorState';
 export { Input } from './Input';
 export { Logo, LogoMark } from './Logo';
 export { Modal } from './Modal';

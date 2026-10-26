@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { ArrowDown, ArrowUp, ArrowUpDown, ListChecks, Plus } from 'lucide-react';
-import { EmptyState, Select, Skeleton } from '@/components/ui';
+import { EmptyState, ErrorState, Select, Skeleton } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import { getErrorMessage } from '@/lib/getErrorMessage';
 import {
   TASK_PRIORITIES,
   TASK_STATUSES,
@@ -81,7 +80,7 @@ function SortHeader({ column, sort, onSort }) {
 
 /** Вкладка «Задачи»: таблица с сортировкой по столбцам и фильтрами статуса и приоритета. */
 export function TaskTable({ projectId, onOpenTask, onAddTask }) {
-  const { data: tasks, isPending, error } = useProjectTasks(projectId);
+  const { data: tasks, isPending, error, refetch, isRefetching } = useProjectTasks(projectId);
   const [sort, setSort] = useState({ key: 'status', dir: 1 });
   const [status, setStatus] = useState('');
   const [priority, setPriority] = useState('');
@@ -97,10 +96,11 @@ export function TaskTable({ projectId, onOpenTask, onAddTask }) {
   }
   if (error) {
     return (
-      <EmptyState
-        icon={ListChecks}
+      <ErrorState
         title="Не удалось загрузить задачи"
-        description={getErrorMessage(error)}
+        error={error}
+        onRetry={refetch}
+        retrying={isRefetching}
       />
     );
   }

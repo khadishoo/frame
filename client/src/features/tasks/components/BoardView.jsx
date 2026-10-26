@@ -18,11 +18,9 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { useReducedMotion } from 'framer-motion';
-import { Kanban, RotateCw } from 'lucide-react';
-import { Button, EmptyState } from '@/components/ui';
+import { ErrorState } from '@/components/ui';
 import { BoardSkeleton } from './BoardSkeleton';
 import { cn } from '@/lib/cn';
-import { getErrorMessage } from '@/lib/getErrorMessage';
 import { TASK_STATUSES, TASK_STATUS_KEYS } from '@/lib/taskMeta';
 import { groupByStatus, locate, moveAcross, reorderWithin, toIds } from '../board';
 import { useMoveTask, useProjectTasks } from '../hooks/useTasks';
@@ -175,20 +173,11 @@ export function BoardView({ projectId, readOnly = false, onOpenTask }) {
   if (isPending) return <BoardSkeleton />;
   if (error) {
     return (
-      <EmptyState
-        icon={Kanban}
+      <ErrorState
         title="Не удалось загрузить задачи"
-        description={getErrorMessage(error)}
-        action={
-          <Button
-            variant="secondary"
-            leftIcon={<RotateCw />}
-            onClick={() => refetch()}
-            loading={isRefetching}
-          >
-            Повторить
-          </Button>
-        }
+        error={error}
+        onRetry={refetch}
+        retrying={isRefetching}
       />
     );
   }

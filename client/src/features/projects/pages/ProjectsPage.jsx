@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
-import { FolderKanban, LayoutGrid, List, Plus, SearchX, Archive, RotateCw } from 'lucide-react';
+import { FolderKanban, LayoutGrid, List, Plus, SearchX, Archive } from 'lucide-react';
 import { PageHeader } from '@/components/layout';
-import { Button, EmptyState, Select, Skeleton, Spinner, Tabs } from '@/components/ui';
+import { Button, EmptyState, ErrorState, Select, Skeleton, Spinner, Tabs } from '@/components/ui';
 import { useCategories, useTags } from '@/features/labels/hooks/useLabels';
 import { cn } from '@/lib/cn';
 import { plural } from '@/lib/dates';
@@ -133,7 +133,9 @@ export default function ProjectsPage() {
     data,
     isPending,
     isError,
+    error,
     refetch,
+    isRefetching,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -156,15 +158,11 @@ export default function ProjectsPage() {
     content = <LoadingState view={view} />;
   } else if (isError) {
     content = (
-      <EmptyState
-        icon={RotateCw}
+      <ErrorState
         title="Не удалось загрузить проекты"
-        description="Проверьте соединение и попробуйте ещё раз."
-        action={
-          <Button variant="secondary" onClick={() => refetch()}>
-            Повторить
-          </Button>
-        }
+        error={error}
+        onRetry={refetch}
+        retrying={isRefetching}
       />
     );
   } else if (total === 0 && hasFilters) {

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router';
 import { AnimatePresence, m } from 'framer-motion';
-import { SearchX, Trash2, X } from 'lucide-react';
+import { RotateCw, SearchX, Trash2, X } from 'lucide-react';
 import {
   Button,
   ConfirmDialog,
@@ -162,7 +162,7 @@ function PanelContent({ taskId, onClose }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const desktop = useMediaQuery('(min-width: 640px)');
 
-  const { data: task, error, isPending } = useTask(taskId);
+  const { data: task, error, isPending, refetch, isRefetching } = useTask(taskId);
   const { data: project } = useProject(task?.projectId);
   const { workspace } = useCurrentWorkspace();
   const updateTask = useUpdateTask();
@@ -298,6 +298,16 @@ function PanelContent({ taskId, onClose }) {
                   ? 'Возможно, её удалили или ссылка ведёт в чужое пространство.'
                   : getErrorMessage(error)}
               </p>
+              {!notFound && (
+                <Button
+                  variant="secondary"
+                  leftIcon={<RotateCw />}
+                  loading={isRefetching}
+                  onClick={() => refetch()}
+                >
+                  Повторить
+                </Button>
+              )}
             </div>
           ) : (
             <PanelSkeleton />

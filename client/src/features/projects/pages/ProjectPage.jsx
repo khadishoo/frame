@@ -21,6 +21,7 @@ import {
   ConfirmDialog,
   Dropdown,
   EmptyState,
+  ErrorState,
   ProgressRing,
   Skeleton,
   Tabs,
@@ -209,7 +210,7 @@ const stubTabs = [
 export default function ProjectPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: project, isPending, error } = useProject(id);
+  const { data: project, isPending, error, refetch, isRefetching } = useProject(id);
   const openEdit = useProjectModal((s) => s.openEdit);
   const updateProject = useUpdateProject();
   const archiveProject = useArchiveProject();
@@ -237,10 +238,11 @@ export default function ProjectPage() {
   if (error?.response?.status === 404) return <ProjectNotFound />;
   if (error) {
     return (
-      <EmptyState
-        icon={LayoutGrid}
+      <ErrorState
         title="Не удалось открыть проект"
-        description={getErrorMessage(error)}
+        error={error}
+        onRetry={refetch}
+        retrying={isRefetching}
         action={<BackLink />}
       />
     );

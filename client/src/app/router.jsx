@@ -7,6 +7,7 @@ import { ProtectedRoute } from '@/features/auth/components/ProtectedRoute';
 import { SplashScreen } from '@/features/auth/components/SplashScreen';
 import { SettingsLayout } from '@/features/settings/components/SettingsLayout';
 import NotFoundPage from './NotFoundPage';
+import { AppNotFound, PageError } from './PageError';
 import RouteErrorPage from './RouteErrorPage';
 
 // Каждая страница — отдельный чанк: код грузится, только когда её открыли.
@@ -49,6 +50,14 @@ function page(Component, variant = 'app') {
     </Suspense>
   );
 }
+
+// У каждой страницы приложения — своя граница ошибок: упала страница — каркас остаётся
+const withPageErrors = (routes) =>
+  routes.map((route) => ({
+    errorElement: <PageError />,
+    ...route,
+    ...(route.children && { children: withPageErrors(route.children) }),
+  }));
 
 // Витрина UI-кита только в dev: в production-сборку этот код не попадает
 const devRoutes = import.meta.env.DEV
@@ -97,7 +106,7 @@ export const router = createBrowserRouter([
                 <AppLayout />
               </Suspense>
             ),
-            children: [
+            children: withPageErrors([
               { index: true, element: page(DashboardPage) },
               { path: 'projects', element: page(ProjectsPage) },
               { path: 'projects/:id', element: page(ProjectPage) },
@@ -121,7 +130,9 @@ export const router = createBrowserRouter([
                 ],
               },
               { path: 'workspace/settings', element: page(WorkspaceSettingsPage) },
-            ],
+              // Неизвестный адрес внутри /app — 404 в каркасе приложения
+              { path: '*', element: <AppNotFound /> },
+            ]),
           },
         ],
       },

@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { useAuthStore } from '@/features/auth/authStore';
+import { CONNECTION_ERROR_MESSAGE, isConnectionError } from '@/lib/getErrorMessage';
 import { queryClient } from '@/lib/queryClient';
-import { toast } from '@/lib/toast';
+import { toast, useToastStore } from '@/lib/toast';
 
 /**
  * Единый axios-инстанс.
@@ -55,6 +56,18 @@ const endExpiredSession = () => {
   }
 };
 
+// Тост «Нет соединения» — один на всё отключение: пока он на экране, новый не показываем,
+// сколько бы запросов ни упало (запросы страницы, повторы TanStack Query, фоновые обновления)
+let connectionToastId = null;
+const notifyConnectionLost = () => {
+  const shown = useToastStore.getState().toasts.some((t) => t.id === connectionToastId);
+  if (shown) return;
+  connectionToastId = toast.error(CONNECTION_ERROR_MESSAGE, {
+    description: 'Проверьте интернет или попробуйте чуть позже.',
+    duration: 8000,
+  });
+};
+
 apiClient.interceptors.request.use((config) => {
   const { accessToken } = useAuthStore.getState();
   if (accessToken && !config.skipAuthRefresh) {
@@ -67,6 +80,8 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const { config, response } = error;
+    if (isConnectionError(error)) notifyConnectionLost();
+
     const canRefresh =
       response?.status === 401 && config && !config.skipAuthRefresh && !config._retried;
 

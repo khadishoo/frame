@@ -1,11 +1,10 @@
 import { useSearchParams } from 'react-router';
 import { Lightbulb, Plus, SearchX } from 'lucide-react';
 import { PageHeader } from '@/components/layout';
-import { Button, EmptyState, Select, Skeleton } from '@/components/ui';
+import { Button, EmptyState, ErrorState, Select, Skeleton } from '@/components/ui';
 import { ProjectSearch } from '@/features/projects/components/ProjectSearch';
 import { useProjectOptions } from '@/features/projects/hooks/useProjects';
 import { useCurrentWorkspace } from '@/features/workspaces/workspaceStore';
-import { getErrorMessage } from '@/lib/getErrorMessage';
 import { NoteCard } from '../components/NoteCard';
 import { useNotes } from '../hooks/useNotes';
 import { useQuickIdea } from '../quickIdeaStore';
@@ -49,7 +48,10 @@ export default function IdeasPage() {
   const rawProject = params.get('project') ?? '';
   const project = rawProject === 'none' || UUID_RE.test(rawProject) ? rawProject : '';
 
-  const { data, isPending, error, isPlaceholderData } = useNotes({ q, projectId: project });
+  const { data, isPending, error, isPlaceholderData, refetch, isRefetching } = useNotes({
+    q,
+    projectId: project,
+  });
   const { data: projects = [] } = useProjectOptions();
   const { workspace } = useCurrentWorkspace();
   const openQuickIdea = useQuickIdea((s) => s.openQuickIdea);
@@ -75,10 +77,11 @@ export default function IdeasPage() {
   if (isPending) content = <IdeasSkeleton />;
   else if (error) {
     content = (
-      <EmptyState
-        icon={Lightbulb}
+      <ErrorState
         title="Не удалось загрузить идеи"
-        description={getErrorMessage(error)}
+        error={error}
+        onRetry={refetch}
+        retrying={isRefetching}
       />
     );
   } else if (notes.length === 0 && filtered) {

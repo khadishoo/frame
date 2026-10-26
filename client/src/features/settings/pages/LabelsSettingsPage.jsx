@@ -18,7 +18,11 @@ export default function LabelsSettingsPage() {
           kind="categories"
           labels={categories.data ?? []}
           isPending={categories.isPending}
+          error={categories.error}
+          onRetry={categories.refetch}
+          retrying={categories.isRefetching}
           texts={{
+            loadError: 'Не удалось загрузить категории',
             placeholder: 'Новая категория',
             emptyIcon: FolderTree,
             emptyTitle: 'Категорий нет',
@@ -37,7 +41,11 @@ export default function LabelsSettingsPage() {
           kind="tags"
           labels={tags.data ?? []}
           isPending={tags.isPending}
+          error={tags.error}
+          onRetry={tags.refetch}
+          retrying={tags.isRefetching}
           texts={{
+            loadError: 'Не удалось загрузить теги',
             placeholder: 'Новый тег',
             emptyIcon: Hash,
             emptyTitle: 'Тегов пока нет',
