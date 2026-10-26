@@ -3,6 +3,7 @@ import { Outlet } from 'react-router';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
 import { ProjectFormModal } from '@/features/projects/components/ProjectFormModal';
+import { TaskPanel } from '@/features/tasks/components/TaskPanel';
 import { MobileDrawer, MobileTabBar } from './MobileNav';
 
 /**
@@ -36,6 +37,8 @@ export function AppLayout() {
 
       <MobileTabBar />
       <ProjectFormModal />
+      {/* Окно задачи по ?task=<id> — с любой страницы */}
+      <TaskPanel />
     </div>
   );
 }

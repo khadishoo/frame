@@ -44,6 +44,7 @@ export const useProject = (id) =>
   useQuery({
     queryKey: projectKeys.detail(id),
     queryFn: () => projectsApi.getProject(id),
+    enabled: Boolean(id),
     // 404 — ответ «проекта нет», повторять бессмысленно
     retry: (count, error) => error?.response?.status !== 404 && count < 1,
   });

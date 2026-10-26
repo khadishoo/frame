@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import {
   Activity,
   Archive,
@@ -40,6 +40,10 @@ import {
   useRestoreProject,
   useUpdateProject,
 } from '../hooks/useProjects';
+import { BoardView } from '@/features/tasks/components/BoardView';
+import { TaskTable } from '@/features/tasks/components/TaskTable';
+import { useTaskParam } from '@/features/tasks/hooks/useTaskParam';
+import { useCurrentWorkspace } from '@/features/workspaces/workspaceStore';
 import { useProjectModal } from '../projectModalStore';
 
 const BackLink = () => (
@@ -144,7 +148,9 @@ function OverviewTab({ project }) {
           <div className="flex flex-col gap-0.5">
             <span className="text-sm font-medium text-fg">Прогресс</span>
             <span className="text-xs text-muted">
-              {total > 0 ? `${done} из ${total} задач готово` : 'Задачи появятся на этапе 7'}
+              {total > 0
+                ? `${done} из ${total} задач готово`
+                : 'Задач пока нет — добавьте их на доске'}
             </span>
           </div>
         </div>
@@ -174,9 +180,21 @@ function OverviewTab({ project }) {
   );
 }
 
+/** Плашка над доской и таблицей: почему нельзя ничего менять. */
+function ReadOnlyNote({ archived }) {
+  return (
+    <p className="mb-3 flex items-center gap-2 rounded-lg bg-surface-2 px-3 py-2 text-sm text-muted">
+      <Archive className="size-4 shrink-0" aria-hidden="true" />
+      {archived
+        ? 'Проект в архиве — доска только для просмотра. Восстановите проект, чтобы менять задачи.'
+        : 'У вас роль «наблюдатель» — задачи только для просмотра.'}
+    </p>
+  );
+}
+
+const TAB_VALUES = ['overview', 'board', 'tasks', 'files', 'notes', 'activity'];
+
 const stubTabs = [
-  { value: 'board', label: 'Доска', icon: Kanban, stage: 7 },
-  { value: 'tasks', label: 'Задачи', icon: ListChecks, stage: 7 },
   { value: 'files', label: 'Файлы', icon: Files, stage: '12 (v1.1)' },
   { value: 'notes', label: 'Заметки', icon: StickyNote, stage: 8 },
   { value: 'activity', label: 'Активность', icon: Activity, stage: '14 (v1.3)' },
@@ -192,6 +210,22 @@ export default function ProjectPage() {
   const restoreProject = useRestoreProject();
   const deleteProject = useDeleteProject();
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [params, setParams] = useSearchParams();
+  const { openTask } = useTaskParam();
+  const { workspace } = useCurrentWorkspace();
+
+  // Вкладка — в адресе (?tab=board): после F5 и по ссылке открывается та же
+  const tab = TAB_VALUES.includes(params.get('tab')) ? params.get('tab') : 'overview';
+  const changeTab = (value) =>
+    setParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (value === 'overview') next.delete('tab');
+        else next.set('tab', value);
+        return next;
+      },
+      { replace: true, preventScrollReset: true },
+    );
 
   if (isPending) return <ProjectSkeleton />;
   if (error?.response?.status === 404) return <ProjectNotFound />;
@@ -209,6 +243,8 @@ export default function ProjectPage() {
   const type = PROJECT_TYPES[project.type];
   const TypeIcon = type.icon;
   const archived = Boolean(project.archivedAt);
+  const readOnly = archived || workspace?.role === 'viewer';
+  const openTaskCard = (task) => openTask(task.id);
 
   const changeStatus = (status) =>
     updateProject.mutate(
@@ -323,12 +359,41 @@ export default function ProjectPage() {
 
       <Tabs
         label="Разделы проекта"
+        value={tab}
+        onValueChange={changeTab}
         items={[
           {
             value: 'overview',
             label: 'Обзор',
             icon: LayoutGrid,
             content: <OverviewTab project={project} />,
+          },
+          {
+            value: 'board',
+            label: 'Доска',
+            icon: Kanban,
+            count: project.taskCounts.total,
+            content: (
+              <>
+                {readOnly && <ReadOnlyNote archived={archived} />}
+                <BoardView projectId={project.id} readOnly={readOnly} onOpenTask={openTaskCard} />
+              </>
+            ),
+          },
+          {
+            value: 'tasks',
+            label: 'Задачи',
+            icon: ListChecks,
+            content: (
+              <>
+                {readOnly && <ReadOnlyNote archived={archived} />}
+                <TaskTable
+                  projectId={project.id}
+                  onOpenTask={openTaskCard}
+                  onAddTask={readOnly ? undefined : () => changeTab('board')}
+                />
+              </>
+            ),
           },
           ...stubTabs.map((tab) => ({
             ...tab,
