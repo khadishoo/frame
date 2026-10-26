@@ -16,7 +16,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "e2e:server": "node scripts/e2e-server.js"
   },
   "dependencies": {
     "argon2": "^0.45.1",

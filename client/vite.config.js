@@ -2,6 +2,9 @@ import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+// Куда проксировать /api: по умолчанию dev-API; E2E поднимает свой на другом порту
+const apiTarget = process.env.API_PROXY_TARGET ?? 'http://localhost:4000';
+
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -30,9 +33,10 @@ export default defineConfig({
     strictPort: true,
     // Запросы /api/* в dev уходят на Express — браузер видит один origin, CORS не нужен
     proxy: {
-      '/api': { target: 'http://localhost:4000', changeOrigin: true },
+      '/api': { target: apiTarget, changeOrigin: true },
     },
   },
+  // vite preview берёт proxy из server.proxy — прод-сборку можно открыть с живым API (E2E, Lighthouse)
   // Vitest: компоненты тестируются в jsdom — «браузере» внутри Node
   test: {
     environment: 'jsdom',
