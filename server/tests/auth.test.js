@@ -216,6 +216,16 @@ describe('Rate limit', () => {
     const blocked = await registerUser({ ...validUser, email: 'user5@example.com' });
     expect(blocked.status).toBe(429);
   });
+
+  it('refresh: 31-й запрос за минуту → 429 (перебор refresh-токенов)', async () => {
+    for (let i = 0; i < 30; i += 1) {
+      const res = await api().post('/api/v1/auth/refresh');
+      expect(res.status).toBe(401);
+    }
+    const blocked = await api().post('/api/v1/auth/refresh');
+    expect(blocked.status).toBe(429);
+    expect(blocked.body.error.code).toBe('TOO_MANY_REQUESTS');
+  });
 });
 
 describe('Сценарий целиком (PLAN, этап 4)', () => {

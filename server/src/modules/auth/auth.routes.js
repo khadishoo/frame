@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { loginLimiter, registerLimiter } from '../../middleware/rateLimit.js';
+import { loginLimiter, registerLimiter, sessionLimiter } from '../../middleware/rateLimit.js';
 import { requireAuth } from '../../middleware/requireAuth.js';
 import { validate } from '../../middleware/validate.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
@@ -15,6 +15,6 @@ authRouter.post(
   asyncHandler(authController.register),
 );
 authRouter.post('/login', loginLimiter, validate(loginSchema), asyncHandler(authController.login));
-authRouter.post('/refresh', asyncHandler(authController.refresh));
-authRouter.post('/logout', asyncHandler(authController.logout));
+authRouter.post('/refresh', sessionLimiter, asyncHandler(authController.refresh));
+authRouter.post('/logout', sessionLimiter, asyncHandler(authController.logout));
 authRouter.get('/me', requireAuth, asyncHandler(authController.me));

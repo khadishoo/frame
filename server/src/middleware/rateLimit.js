@@ -26,6 +26,14 @@ const AUTH_MESSAGE = 'Слишком много попыток. Попробуй
 export const loginLimiter = createLimiter({ windowMs: 60_000, limit: 5, message: AUTH_MESSAGE });
 export const registerLimiter = createLimiter({ windowMs: 60_000, limit: 5, message: AUTH_MESSAGE });
 
+// Обновление сессии и выход: пароль тут не подобрать, но перебор refresh-токенов и
+// «шторм» запросов нужно ограничить. Обычной вкладке хватает пары запросов в минуту.
+export const sessionLimiter = createLimiter({
+  windowMs: 60_000,
+  limit: 30,
+  message: 'Слишком много запросов. Попробуйте через минуту',
+});
+
 // Действия, подтверждаемые паролем: через них тоже нельзя подбирать пароль
 export const accountLimiters = {
   changePassword: createLimiter({ windowMs: 60_000, limit: 5, message: AUTH_MESSAGE }),
