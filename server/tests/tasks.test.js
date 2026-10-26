@@ -31,7 +31,7 @@ describe('CRUD задач', () => {
       status: 'todo',
       priority: 'medium',
       dueDate: null,
-      assignee: null,
+      assignee: { id: anna.user.id, name: 'Анна' }, // по умолчанию — автор
       completedAt: null,
       createdBy: anna.user.id,
       position: 1000,
@@ -57,6 +57,12 @@ describe('CRUD задач', () => {
       assignee: { id: anna.user.id, name: 'Анна' },
       position: 1000, // своя колонка — своя нумерация
     });
+  });
+
+  it('исполнитель по умолчанию — автор; явный null — без исполнителя', async () => {
+    expect((await create({ title: 'Моя' })).body.assignee).toMatchObject({ id: anna.user.id });
+    expect((await create({ title: 'Ничья', assigneeId: null })).body.assignee).toBeNull();
+    expect((await create({ title: 'Ничья', assigneeId: '' })).body.assignee).toBeNull();
   });
 
   it('валидация — ошибки у полей', async () => {
@@ -171,7 +177,7 @@ describe('Задачи пространства (Мои задачи, кален
     await create({ title: 'Без даты', assigneeId: me });
     await create({ title: 'Ноябрь', dueDate: '2026-11-10', assigneeId: me });
     await create({ title: 'Октябрь', dueDate: '2026-10-20', status: 'done', assigneeId: me });
-    await create({ title: 'Ничья', dueDate: '2026-11-05' });
+    await create({ title: 'Ничья', dueDate: '2026-11-05', assigneeId: null });
     await api()
       .post(tasksUrl(other.id))
       .send({ title: 'Монтаж', dueDate: '2026-11-10', priority: 'urgent', assigneeId: me });

@@ -211,9 +211,13 @@ const renumberColumn = (trx, projectId, status, taskId) =>
 
 // ── Изменения ───────────────────────────────────────────────────────────────
 
-/** Новая задача — в конец своей колонки. */
-export const createTask = (project, userId, data) =>
+/**
+ * Новая задача — в конец своей колонки. Исполнитель не передан — назначаем автора
+ * (явный null или '' — «без исполнителя»).
+ */
+export const createTask = (project, userId, { assigneeId = userId, ...rest }) =>
   db.transaction(async (trx) => {
+    const data = { ...rest, assigneeId };
     await lockProject(trx, project.id);
     await assertAssignee(trx, data.assigneeId, project.workspace_id);
 
