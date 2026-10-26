@@ -145,3 +145,16 @@ describe('Роли', () => {
     for (const res of responses) expect(res.status).toBe(403);
   });
 });
+
+describe('Каскады', () => {
+  it('удаление аккаунта удаляет его проекты вместе с задачами (автор = исполнитель)', async () => {
+    // У annaTask Анна и автор, и исполнитель — две ссылки на одного пользователя
+    const res = await as(anna.token)
+      .delete('/api/v1/users/me')
+      .send({ password: 'correct-horse-42' });
+
+    expect(res.status).toBe(204);
+    expect(await db('projects').where({ id: annaProject.id })).toHaveLength(0);
+    expect(await db('tasks')).toHaveLength(0);
+  });
+});

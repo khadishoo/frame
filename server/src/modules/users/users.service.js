@@ -89,11 +89,21 @@ export const changePassword = async (userId, { currentPassword, newPassword }, m
 };
 
 /**
- * Удаление аккаунта. Внешние ключи ON DELETE CASCADE удалят вместе с пользователем
- * его сессии, пространства, где он владелец, и членства.
+ * Удалить пользователя со всеми его данными. Порядок важен: сначала пространства, где он
+ * владелец (каскадом — проекты и задачи), потом сам пользователь (сессии, членства).
+ * Одним DELETE users нельзя: у задачи две ссылки на пользователя (автор и исполнитель),
+ * PostgreSQL обнуляет их по очереди, и второе обновление проверяет ссылку на проект,
+ * который в той же команде уже удалён, → ошибка внешнего ключа.
  */
+const deleteUserCascade = (userId) =>
+  db.transaction(async (trx) => {
+    await trx('workspaces').where({ owner_id: userId }).del();
+    await trx('users').where({ id: userId }).del();
+  });
+
+/** Удаление аккаунта (с подтверждением паролем). */
 export const deleteMe = async (userId, { password }) => {
   const user = await getExistingUser(userId);
   await assertPassword(user, password, 'password');
-  await db('users').where({ id: userId }).del();
+  await deleteUserCascade(userId);
 };

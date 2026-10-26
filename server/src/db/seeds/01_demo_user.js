@@ -152,8 +152,13 @@ const ARCHIVED = {
 };
 
 export async function seed(knex) {
-  // Удаляем только прошлого демо-пользователя (каскадом — его пространство и данные)
-  await knex('users').where({ email: DEMO.email }).del();
+  // Удаляем только прошлого демо-пользователя: сначала его пространства (каскадом — проекты
+  // и задачи), потом его самого — порядок как в users.service (deleteUserCascade)
+  const old = await knex('users').where({ email: DEMO.email }).first('id');
+  if (old) {
+    await knex('workspaces').where({ owner_id: old.id }).del();
+    await knex('users').where({ id: old.id }).del();
+  }
 
   await knex.transaction(async (trx) => {
     const [user] = await trx('users')
