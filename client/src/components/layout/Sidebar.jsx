@@ -54,15 +54,20 @@ function WorkspaceSwitcher({ compact }) {
             compact &&
               'md:max-lg:justify-center md:max-lg:border-transparent md:max-lg:bg-transparent md:max-lg:shadow-none',
           )}
-          aria-label="Переключить пространство"
         >
-          <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-accent font-display text-xs font-semibold text-accent-fg">
+          {/* Без aria-label: имя кнопки — её текст (название пространства) + подсказка для
+              скринридеров; так видимый текст входит в имя (WCAG 2.5.3) */}
+          <span
+            aria-hidden="true"
+            className="flex size-7 shrink-0 items-center justify-center rounded-md bg-accent font-display text-xs font-semibold text-accent-fg"
+          >
             {name[0]}
           </span>
           <span className={cn('flex min-w-0 flex-1 flex-col', labelClass(compact))}>
             <span className="truncate text-sm font-medium text-fg">{name}</span>
             <span className="text-xs text-muted">Только вы</span>
           </span>
+          <span className="sr-only">— переключить пространство</span>
           <ChevronsUpDown
             className={cn('size-4 shrink-0 text-muted', labelClass(compact))}
             aria-hidden="true"

@@ -208,7 +208,7 @@ export default function ProjectsPage() {
           <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {projects.map((project) => (
               <li key={project.id} className="flex">
-                <ProjectCard project={project} />
+                <ProjectCard project={project} headingLevel={2} />
               </li>
             ))}
           </ul>

@@ -71,7 +71,11 @@ export function Tabs({
               role="tab"
               id={`${baseId}-tab-${item.value}`}
               aria-selected={selected}
-              aria-controls={`${baseId}-panel-${item.value}`}
+              // Панель рисуется только у выбранной вкладки (и только если есть content) —
+              // ссылка на несуществующий id невалидна
+              aria-controls={
+                selected && item.content !== undefined ? `${baseId}-panel-${item.value}` : undefined
+              }
               tabIndex={selected ? 0 : -1}
               onClick={() => select(item.value)}
               className={cn(

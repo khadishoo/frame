@@ -29,7 +29,7 @@ export function NoteCard({ note, className }) {
         <h3
           className={cn(
             'line-clamp-2 break-words text-sm font-semibold text-fg',
-            !note.title.trim() && 'text-muted',
+            !note.title.trim() && (note.color ? 'text-fg/70' : 'text-muted'),
           )}
         >
           {note.isPinned && (
@@ -46,7 +46,13 @@ export function NoteCard({ note, className }) {
             {text}
           </p>
         )}
-        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
+        {/* На цветной карточке серый text-muted чуть не дотягивает до контраста 4.5:1 */}
+        <div
+          className={cn(
+            'mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs',
+            note.color ? 'text-fg/70' : 'text-muted',
+          )}
+        >
           {note.project && (
             <span className="inline-flex min-w-0 items-center gap-1.5">
               <span className={cn('size-2 shrink-0 rounded-full', type.dot)} aria-hidden="true" />

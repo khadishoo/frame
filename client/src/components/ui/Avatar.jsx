@@ -9,14 +9,15 @@ const sizes = {
   xl: 'size-16 text-lg',
 };
 
-// Цвет фона инициалов стабилен для одного имени
+// Цвет фона инициалов стабилен для одного имени. Сами инициалы — text-fg: цветной текст
+// на бледном фоне того же цвета не набирает контраста 4.5:1 (у кораллового — 2.5)
 const palette = [
-  'bg-type-art/15 text-type-art',
-  'bg-type-music/15 text-type-music',
-  'bg-type-video/15 text-type-video',
-  'bg-type-photo/15 text-type-photo',
-  'bg-type-script/15 text-type-script',
-  'bg-type-dev/15 text-type-dev',
+  'bg-type-art/25',
+  'bg-type-music/25',
+  'bg-type-video/25',
+  'bg-type-photo/25',
+  'bg-type-script/25',
+  'bg-type-dev/25',
 ];
 
 const colorFor = (name = '') => {
@@ -41,7 +42,7 @@ export function Avatar({ src, name = '', size = 'md', className }) {
   return (
     <span
       className={cn(
-        'relative inline-flex shrink-0 select-none items-center justify-center overflow-hidden rounded-full font-semibold ring-1 ring-border',
+        'relative inline-flex shrink-0 select-none items-center justify-center overflow-hidden rounded-full font-semibold text-fg ring-1 ring-border',
         !showImage && colorFor(name),
         sizes[size],
         className,
@@ -57,7 +58,13 @@ export function Avatar({ src, name = '', size = 'md', className }) {
           onError={() => setFailedSrc(src)}
         />
       ) : (
-        <span aria-hidden="true">{initialsOf(name) || '?'}</span>
+        // Инициалы — через CSS content, а не текстом: имя аватара уже в aria-label, а видимый
+        // текст «АБ» внутри кнопки с подписью «Меню пользователя …» не совпадал бы с ней (WCAG 2.5.3)
+        <span
+          aria-hidden="true"
+          data-initials={initialsOf(name) || '?'}
+          className="before:content-[attr(data-initials)]"
+        />
       )}
     </span>
   );

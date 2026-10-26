@@ -86,7 +86,9 @@ describe('LoginPage', () => {
       password: 'correct-horse',
     });
     expect(useAuthStore.getState().accessToken).toBe('jwt');
-    expect(window.localStorage).toHaveLength(0);
+    // В хранилище — только отметка «сессия была» (sessionHint), ни токена, ни данных
+    expect(Object.keys(window.localStorage)).toEqual(['frame-session']);
+    expect(window.localStorage.getItem('frame-session')).toBe('1');
   });
 
   it('кнопка «Показать пароль» меняет тип поля', async () => {

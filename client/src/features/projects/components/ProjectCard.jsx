@@ -23,7 +23,9 @@ const progressLabel = (project) =>
  * Карточка проекта для сетки. Вся карточка — ссылка на страницу проекта; звёздочка лежит
  * поверх, но в разметке — рядом со ссылкой (кнопка внутри ссылки — некорректный HTML).
  */
-export function ProjectCard({ project }) {
+export function ProjectCard({ project, headingLevel = 3 }) {
+  // h2 — в сетке сразу под заголовком страницы, h3 — внутри раздела (дашборд, избранное)
+  const Heading = `h${headingLevel}`;
   const type = PROJECT_TYPES[project.type];
   const Icon = type.icon;
 
@@ -58,9 +60,9 @@ export function ProjectCard({ project }) {
 
         <div className="flex flex-1 flex-col gap-3 p-4 pt-3">
           <div className="flex flex-col gap-1.5">
-            <h3 className="line-clamp-2 font-sans text-base font-semibold leading-snug text-fg">
+            <Heading className="line-clamp-2 font-sans text-base font-semibold leading-snug text-fg">
               {project.title}
-            </h3>
+            </Heading>
             <p className="text-xs text-muted">
               {type.label}
               {project.category && ' · '}

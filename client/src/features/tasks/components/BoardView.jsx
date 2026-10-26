@@ -110,9 +110,9 @@ function BoardColumn({ status, ids, tasksById, projectId, readOnly, onOpenTask }
           className={cn('size-2 shrink-0 rounded-full', TASK_STATUSES[status].dot)}
           aria-hidden="true"
         />
-        <h3 id={headingId} className="text-sm font-semibold text-fg">
+        <h2 id={headingId} className="text-sm font-semibold text-fg">
           {TASK_STATUSES[status].label}
-        </h3>
+        </h2>
         <span className="rounded-full bg-surface px-1.5 text-xs tabular-nums text-muted">
           <span className="sr-only">задач: </span>
           {ids.length}
