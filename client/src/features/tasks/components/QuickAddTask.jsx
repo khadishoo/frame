@@ -45,10 +45,13 @@ export function QuickAddTask({ projectId, status }) {
         ref={buttonRef}
         type="button"
         onClick={() => setOpen(true)}
-        className="focus-ring flex h-9 w-full items-center gap-1.5 rounded-lg px-2 text-sm text-muted transition-colors hover:bg-surface hover:text-fg"
+        // Одной строкой. Узкие колонки (~150 px) — только при 1024–1279 px: там короткая подпись
+        className="focus-ring flex h-9 w-full min-w-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-2 text-sm text-muted transition-colors hover:bg-surface hover:text-fg"
+        aria-label="Добавить задачу"
       >
-        <Plus className="size-4" aria-hidden="true" />
-        Добавить задачу
+        <Plus className="size-4 shrink-0" aria-hidden="true" />
+        <span className="truncate lg:hidden xl:inline">Добавить задачу</span>
+        <span className="hidden truncate lg:inline xl:hidden">Добавить</span>
       </button>
     );
   }
