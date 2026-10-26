@@ -100,8 +100,16 @@ export const getProject = async (id, trx = db) => {
   return project;
 };
 
+/** Проекты по списку id — в том же порядке (для «Избранного»). */
+export const getProjectsByIds = async (ids) => {
+  if (ids.length === 0) return [];
+  const projects = await withRelations(await projectsQuery().whereIn('p.id', ids));
+  const byId = new Map(projects.map((p) => [p.id, p]));
+  return ids.map((id) => byId.get(id)).filter(Boolean);
+};
+
 // Экранируем % и _ — иначе «50%» в поиске значило бы «50 и что угодно»
-const escapeLike = (value) => value.replace(/[\\%_]/g, (char) => `\\${char}`);
+export const escapeLike = (value) => value.replace(/[\\%_]/g, (char) => `\\${char}`);
 
 const SORTS = {
   updated_at: { column: 'p.updated_at', defaultOrder: 'desc' },

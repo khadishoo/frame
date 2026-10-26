@@ -151,6 +151,55 @@ const ARCHIVED = {
   tags: [],
 };
 
+// Идеи и заметки разного вида: короткие, с Markdown, цветные, закреплённые, привязанные
+// к проекту (project — название из PROJECTS)
+const NOTES = [
+  {
+    title: 'Комикс про кота-почтальона',
+    content: 'Кот разносит письма по крышам ночного города.\n\n- 8 страниц\n- акварель + тушь',
+    color: 'amber',
+    pinned: true,
+  },
+  {
+    title: 'Звуки для эмбиента',
+    content:
+      '## Что записать\n\n1. Скрип снега\n2. Ветер в проводах\n3. Метро ночью\n\n> Писать в WAV, 48 кГц',
+    color: 'violet',
+    project: 'Альбом «Северное сияние»',
+    pinned: true,
+  },
+  { title: '', content: 'Снять таймлапс тумана над рекой — рано утром, с моста', color: 'teal' },
+  {
+    title: 'Цвета для книги',
+    content: 'Тёплая охра, приглушённый бирюзовый, **никакого** чистого чёрного.',
+    project: 'Иллюстрации для детской книги',
+  },
+  {
+    title: 'Идеи для сайта',
+    content: '- [x] Тёмная тема\n- [ ] Галерея с фильтрами\n- [ ] Страница «Обо мне» с фото',
+    color: 'blue',
+    project: 'Сайт-портфолио',
+  },
+  { title: 'Подкаст: темы первых выпусков', content: 'Выгорание, заказы, как вести портфолио.' },
+  {
+    title: 'Цитата',
+    content: '> Вдохновение существует, но оно должно застать тебя за работой.\n\n— Пикассо',
+    color: 'pink',
+    pinned: true,
+  },
+  { title: 'Фотопрогулка', content: 'Старые дворы, отражения в лужах, неон.', color: 'green' },
+  {
+    title: 'Сюжет для короткого метра',
+    content:
+      'Два незнакомца каждый день встречаются в лифте и ни разу не говорят.\n\n```\nНАТ. ЛИФТ — УТРО\n```',
+    project: 'Сценарий короткого метра',
+  },
+];
+
+// Избранное демо-пользователя
+const FAVORITE_PROJECTS = ['Альбом «Северное сияние»', 'Сайт-портфолио'];
+const FAVORITE_NOTES = ['Комикс про кота-почтальона'];
+
 export async function seed(knex) {
   // Удаляем только прошлого демо-пользователя: сначала его пространства (каскадом — проекты
   // и задачи), потом его самого — порядок как в users.service (deleteUserCascade)
@@ -193,6 +242,7 @@ export async function seed(knex) {
     const tagId = (name) => tags.find((t) => t.name === name).id;
 
     const all = [...PROJECTS, { ...ARCHIVED, archived: true }];
+    const projectIds = new Map();
     for (const [index, p] of all.entries()) {
       const [project] = await trx('projects')
         .insert({
@@ -210,6 +260,7 @@ export async function seed(knex) {
           updated_at: trx.raw(`now() - interval '${index} hours'`),
         })
         .returning('id');
+      projectIds.set(p.title, project.id);
       if (p.tags.length > 0) {
         await trx('project_tags').insert(
           p.tags.map((name) => ({ project_id: project.id, tag_id: tagId(name) })),
@@ -235,6 +286,34 @@ export async function seed(knex) {
       });
       if (tasks.length > 0) await trx('tasks').insert(tasks);
     }
+
+    const notes = await trx('notes')
+      .insert(
+        NOTES.map((n, index) => ({
+          workspace_id: workspace.id,
+          author_id: user.id,
+          project_id: n.project ? projectIds.get(n.project) : null,
+          title: n.title,
+          content: n.content,
+          color: n.color ?? null,
+          is_pinned: n.pinned ?? false,
+          updated_at: trx.raw(`now() - interval '${index * 5} hours'`),
+        })),
+      )
+      .returning(['id', 'title']);
+
+    await trx('favorites').insert([
+      ...FAVORITE_PROJECTS.map((title) => ({
+        user_id: user.id,
+        entity_type: 'project',
+        entity_id: projectIds.get(title),
+      })),
+      ...FAVORITE_NOTES.map((title) => ({
+        user_id: user.id,
+        entity_type: 'note',
+        entity_id: notes.find((n) => n.title === title).id,
+      })),
+    ]);
   });
 
   // eslint-disable-next-line no-console -- подсказка разработчику после сида

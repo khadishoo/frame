@@ -13,6 +13,9 @@ export const TASK_STATUSES = ['todo', 'in_progress', 'review', 'done'];
 
 export const TASK_PRIORITIES = ['low', 'medium', 'high', 'urgent'];
 
+// Что можно добавить в избранное
+export const FAVORITE_TYPES = ['project', 'note'];
+
 export const VISIBILITIES = ['private', 'workspace', 'public'];
 
 // Палитра категорий, тегов и проектов (клиент подбирает оттенок под тему)
