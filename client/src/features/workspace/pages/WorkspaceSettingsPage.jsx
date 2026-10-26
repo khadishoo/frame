@@ -6,7 +6,7 @@ export default function WorkspaceSettingsPage() {
     <PageStub
       title="Настройки пространства"
       description="Участники, роли, приглашения и категории проектов."
-      stage={'13 (v1.2)'}
+      version="1.2"
       icon={Users}
     />
   );

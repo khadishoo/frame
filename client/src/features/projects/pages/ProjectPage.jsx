@@ -203,8 +203,8 @@ function ReadOnlyNote({ archived }) {
 const TAB_VALUES = ['overview', 'board', 'tasks', 'files', 'notes', 'activity'];
 
 const stubTabs = [
-  { value: 'files', label: 'Файлы', icon: Files, stage: '12 (v1.1)' },
-  { value: 'activity', label: 'Активность', icon: Activity, stage: '14 (v1.3)' },
+  { value: 'files', label: 'Файлы', icon: Files, version: '1.1' },
+  { value: 'activity', label: 'Активность', icon: Activity, version: '1.3' },
 ];
 
 export default function ProjectPage() {
@@ -313,8 +313,11 @@ export default function ProjectPage() {
           ))}
         </div>
 
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <h1 className="text-xl font-semibold text-fg sm:text-2xl">{project.title}</h1>
+        {/* В строку с кнопками — только от 1024 px: на планшете кнопки сжимали название в 3 строки */}
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <h1 className="min-w-0 break-words text-xl font-semibold text-fg sm:text-2xl">
+            {project.title}
+          </h1>
 
           <div className="flex shrink-0 items-center gap-2">
             {archived ? (
@@ -421,7 +424,7 @@ export default function ProjectPage() {
               <EmptyState
                 icon={tab.icon}
                 title={`Вкладка «${tab.label}»`}
-                description={`Появится на этапе ${tab.stage}.`}
+                description={`Появится в версии ${tab.version}.`}
               />
             ),
           })),

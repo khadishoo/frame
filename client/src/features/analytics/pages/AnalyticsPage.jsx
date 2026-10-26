@@ -6,7 +6,7 @@ export default function AnalyticsPage() {
     <PageStub
       title="Аналитика"
       description="Выполненные задачи, серия дней и распределение по творческим типам."
-      stage={'14 (v1.3)'}
+      version="1.3"
       icon={ChartColumn}
     />
   );

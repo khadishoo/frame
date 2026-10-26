@@ -11,7 +11,7 @@ export default function InvitePage() {
       </span>
       <div className="flex flex-col gap-1.5">
         <h1 className="text-xl font-semibold text-fg">Приглашение в пространство</h1>
-        <p className="text-sm text-muted">Принятие приглашений появится в версии 1.2 (этап 13).</p>
+        <p className="text-sm text-muted">Принятие приглашений появится в версии 1.2.</p>
       </div>
       <Link to="/" className={buttonVariants({ variant: 'secondary', className: 'w-full' })}>
         На главную

@@ -6,7 +6,7 @@ export default function CalendarPage() {
     <PageStub
       title="Календарь"
       description="Задачи по дедлайнам: перетащите задачу на другой день, чтобы перенести срок."
-      stage={'12 (v1.1)'}
+      version="1.1"
       icon={CalendarDays}
     />
   );

@@ -174,7 +174,7 @@ export function TaskTable({ projectId, onOpenTask, onAddTask }) {
                 onClick={() => onOpenTask(task)}
                 className="cursor-pointer border-b border-border transition-colors last:border-0 hover:bg-surface-2/60"
               >
-                <td className="max-w-80 px-3 py-2.5">
+                <td className="min-w-48 max-w-80 px-3 py-2.5">
                   {/* Кнопка — чтобы строку можно было открыть с клавиатуры */}
                   <button
                     type="button"

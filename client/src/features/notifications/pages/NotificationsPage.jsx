@@ -6,7 +6,7 @@ export default function NotificationsPage() {
     <PageStub
       title="Уведомления"
       description="Назначения, упоминания, комментарии и приближающиеся дедлайны."
-      stage={'13 (v1.2)'}
+      version="1.2"
       icon={Bell}
     />
   );

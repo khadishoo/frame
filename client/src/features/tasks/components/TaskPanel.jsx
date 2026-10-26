@@ -62,7 +62,7 @@ function TaskForm({ task, readOnly, save, flushRef }) {
 
   const assigneeOptions = [
     { value: '', label: 'Не назначен' },
-    ...(user ? [{ value: user.id, label: `Вы (${user.name})` }] : []),
+    ...(user ? [{ value: user.id, label: 'Вы' }] : []),
     ...(task.assignee && task.assignee.id !== user?.id
       ? [{ value: task.assignee.id, label: task.assignee.name }]
       : []),

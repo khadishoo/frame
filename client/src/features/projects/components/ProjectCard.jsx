@@ -30,7 +30,7 @@ export function ProjectCard({ project, headingLevel = 3 }) {
   const Icon = type.icon;
 
   return (
-    <div className="group/card relative flex">
+    <div className="group/card relative flex w-full">
       <Link
         to={`/app/projects/${project.id}`}
         className={cn(
