@@ -60,6 +60,15 @@ export const getNotesByIds = async (ids) => {
   return ids.map((id) => byId.get(id)).filter(Boolean);
 };
 
+/** Последние изменённые заметки — без учёта закрепления (дашборд, «Свежие идеи»). */
+export const recentNotes = async (workspaceId, limit) =>
+  (
+    await notesQuery()
+      .where('n.workspace_id', workspaceId)
+      .orderBy([{ column: 'n.updated_at', order: 'desc' }, { column: 'n.id' }])
+      .limit(limit)
+  ).map(toNote);
+
 /** Заметки пространства: закреплённые сверху, затем недавно изменённые. */
 export const listNotes = async (workspaceId, { q, projectId, pinned, limit, offset }) => {
   const filtered = db('notes as n').where('n.workspace_id', workspaceId);

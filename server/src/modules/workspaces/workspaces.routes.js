@@ -1,9 +1,11 @@
 import { Router } from 'express';
 import { loadWorkspace } from '../../middleware/access.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
+import { dashboardRouter } from '../dashboard/dashboard.routes.js';
 import { categoryRouters, tagRouters } from '../labels/labels.routes.js';
 import { workspaceNotesRouter } from '../notes/notes.routes.js';
 import { workspaceProjectsRouter } from '../projects/projects.routes.js';
+import { searchRouter } from '../search/search.routes.js';
 import { workspaceTasksRouter } from '../tasks/tasks.routes.js';
 import { listUserWorkspaces } from './workspaces.service.js';
 
@@ -25,5 +27,7 @@ workspaceRouter.use('/categories', categoryRouters.collection);
 workspaceRouter.use('/tags', tagRouters.collection);
 workspaceRouter.use('/tasks', workspaceTasksRouter);
 workspaceRouter.use('/notes', workspaceNotesRouter);
+workspaceRouter.use('/dashboard', dashboardRouter);
+workspaceRouter.use('/search', searchRouter);
 
 workspacesRouter.use('/:wsId', workspaceRouter);
