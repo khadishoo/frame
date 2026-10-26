@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -6,9 +7,11 @@ import { ProjectCard, ProjectRow } from '../components/ProjectCard';
 
 const renderCard = (project, Component = ProjectCard) =>
   render(
-    <MemoryRouter>
-      <Component project={project} />
-    </MemoryRouter>,
+    <QueryClientProvider client={new QueryClient()}>
+      <MemoryRouter>
+        <Component project={project} />
+      </MemoryRouter>
+    </QueryClientProvider>,
   );
 
 const tags = ['лофи', 'черновик', 'срочно', 'портфолио', 'зин'].map((name, i) => ({

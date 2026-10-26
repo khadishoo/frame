@@ -40,6 +40,8 @@ import {
   useRestoreProject,
   useUpdateProject,
 } from '../hooks/useProjects';
+import { FavoriteButton } from '@/features/favorites/components/FavoriteButton';
+import { ProjectNotes } from '@/features/notes/components/ProjectNotes';
 import { BoardView } from '@/features/tasks/components/BoardView';
 import { TaskTable } from '@/features/tasks/components/TaskTable';
 import { useTaskParam } from '@/features/tasks/hooks/useTaskParam';
@@ -196,7 +198,6 @@ const TAB_VALUES = ['overview', 'board', 'tasks', 'files', 'notes', 'activity'];
 
 const stubTabs = [
   { value: 'files', label: 'Файлы', icon: Files, stage: '12 (v1.1)' },
-  { value: 'notes', label: 'Заметки', icon: StickyNote, stage: 8 },
   { value: 'activity', label: 'Активность', icon: Activity, stage: '14 (v1.3)' },
 ];
 
@@ -330,6 +331,7 @@ export default function ProjectPage() {
                 </span>
               </label>
             )}
+            <FavoriteButton type="project" item={project} />
             <Button variant="secondary" leftIcon={<Pencil />} onClick={() => openEdit(project)}>
               <span className="hidden xs:inline">Редактировать</span>
             </Button>
@@ -393,6 +395,15 @@ export default function ProjectPage() {
                   onAddTask={readOnly ? undefined : () => changeTab('board')}
                 />
               </>
+            ),
+          },
+          {
+            value: 'notes',
+            label: 'Заметки',
+            icon: StickyNote,
+            // Заметки принадлежат пространству — их можно вести и у архивного проекта
+            content: (
+              <ProjectNotes projectId={project.id} readOnly={workspace?.role === 'viewer'} />
             ),
           },
           ...stubTabs.map((tab) => ({

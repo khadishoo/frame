@@ -2,8 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Check, CircleAlert, LoaderCircle, SearchX, Trash2, X } from 'lucide-react';
-import { Button, ConfirmDialog, Input, Select, Skeleton, Textarea } from '@/components/ui';
+import { SearchX, Trash2, X } from 'lucide-react';
+import {
+  Button,
+  ConfirmDialog,
+  Input,
+  SaveStatus,
+  Select,
+  Skeleton,
+  Textarea,
+} from '@/components/ui';
 import { useAuthStore } from '@/features/auth/authStore';
 import { useProject } from '@/features/projects/hooks/useProjects';
 import { useCurrentWorkspace } from '@/features/workspaces/workspaceStore';
@@ -17,29 +25,6 @@ import { toast } from '@/lib/toast';
 import { taskPriorityOptions, taskStatusOptions } from '@/lib/taskMeta';
 import { useDeleteTask, useTask, useUpdateTask } from '../hooks/useTasks';
 import { useTaskParam } from '../hooks/useTaskParam';
-
-/** «Сохраняется… / Сохранено ✓ / Не сохранено» — для экранного диктора тоже (aria-live). */
-function SaveStatus({ state }) {
-  return (
-    <span aria-live="polite" className="flex h-5 items-center text-xs">
-      {state === 'saving' && (
-        <span className="flex items-center gap-1.5 text-muted">
-          <LoaderCircle className="size-3 animate-spin" aria-hidden="true" /> Сохраняется…
-        </span>
-      )}
-      {state === 'saved' && (
-        <span className="flex items-center gap-1 text-success">
-          Сохранено <Check className="size-3.5" aria-hidden="true" />
-        </span>
-      )}
-      {state === 'error' && (
-        <span className="flex items-center gap-1 text-danger">
-          <CircleAlert className="size-3.5" aria-hidden="true" /> Не сохранено
-        </span>
-      )}
-    </span>
-  );
-}
 
 /**
  * Поля задачи. Текст сохраняется при уходе с поля, выпадающие списки и дата — сразу

@@ -10,7 +10,6 @@ import CalendarPage from '@/features/calendar/pages/CalendarPage';
 import DashboardPage from '@/features/dashboard/pages/DashboardPage';
 import FavoritesPage from '@/features/favorites/pages/FavoritesPage';
 import LandingPage from '@/features/landing/pages/LandingPage';
-import IdeaEditorPage from '@/features/notes/pages/IdeaEditorPage';
 import IdeasPage from '@/features/notes/pages/IdeasPage';
 import OnboardingPage from '@/features/onboarding/pages/OnboardingPage';
 import NotificationsPage from '@/features/notifications/pages/NotificationsPage';
@@ -77,7 +76,13 @@ export const router = createBrowserRouter([
               { path: 'tasks', element: <MyTasksPage /> },
               { path: 'calendar', element: <CalendarPage /> },
               { path: 'ideas', element: <IdeasPage /> },
-              { path: 'ideas/:id', element: <IdeaEditorPage /> },
+              {
+                path: 'ideas/:id',
+                // Лениво: Markdown-библиотеки (~190 КБ) грузятся, только когда открыли идею
+                lazy: async () => ({
+                  Component: (await import('@/features/notes/pages/IdeaEditorPage')).default,
+                }),
+              },
               { path: 'favorites', element: <FavoritesPage /> },
               { path: 'analytics', element: <AnalyticsPage /> },
               { path: 'notifications', element: <NotificationsPage /> },

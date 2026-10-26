@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 import { ProgressRing } from '@/components/ui';
+import { FavoriteButton } from '@/features/favorites/components/FavoriteButton';
 import { cn } from '@/lib/cn';
 import { PROJECT_TYPES } from '@/lib/projectTypes';
 import { DueDate, LabelChip, StatusBadge, TagList } from './ProjectBits';
@@ -18,63 +19,80 @@ const covers = {
 const progressLabel = (project) =>
   `Прогресс: ${project.progress}% (${project.taskCounts.done} из ${project.taskCounts.total} задач)`;
 
-/** Карточка проекта для сетки. Вся карточка — ссылка на страницу проекта. */
+/**
+ * Карточка проекта для сетки. Вся карточка — ссылка на страницу проекта; звёздочка лежит
+ * поверх, но в разметке — рядом со ссылкой (кнопка внутри ссылки — некорректный HTML).
+ */
 export function ProjectCard({ project }) {
   const type = PROJECT_TYPES[project.type];
   const Icon = type.icon;
 
   return (
-    <Link
-      to={`/app/projects/${project.id}`}
-      className={cn(
-        'focus-ring group relative flex w-full flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-soft',
-        'transition-[transform,box-shadow,border-color] duration-200 hover:border-muted/30 hover:shadow-pop motion-safe:hover:-translate-y-0.5',
-        project.archivedAt && 'opacity-75',
-      )}
-    >
-      {/* Полоска типа */}
-      <span className={cn('absolute inset-x-0 top-0 h-1', type.dot)} aria-hidden="true" />
-
-      {/* Обложка-градиент с иконкой типа */}
-      <div
+    <div className="group/card relative flex">
+      <Link
+        to={`/app/projects/${project.id}`}
         className={cn(
-          'relative flex h-24 items-end justify-between bg-gradient-to-br to-transparent px-4 pb-3',
-          covers[project.type],
+          'focus-ring group relative flex w-full flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-soft',
+          'transition-[transform,box-shadow,border-color] duration-200 hover:border-muted/30 hover:shadow-pop motion-safe:hover:-translate-y-0.5',
+          project.archivedAt && 'opacity-75',
         )}
       >
-        <span
-          className="flex size-10 items-center justify-center rounded-xl bg-surface shadow-soft transition-transform duration-200 motion-safe:group-hover:scale-105"
-          title={type.label}
+        {/* Полоска типа */}
+        <span className={cn('absolute inset-x-0 top-0 h-1', type.dot)} aria-hidden="true" />
+
+        {/* Обложка-градиент с иконкой типа */}
+        <div
+          className={cn(
+            'relative flex h-24 items-end justify-between bg-gradient-to-br to-transparent px-4 pb-3',
+            covers[project.type],
+          )}
         >
-          <Icon className={cn('size-5', type.text)} aria-hidden="true" />
-        </span>
-        <StatusBadge project={project} className="bg-surface/80 backdrop-blur-sm" />
-      </div>
-
-      <div className="flex flex-1 flex-col gap-3 p-4 pt-3">
-        <div className="flex flex-col gap-1.5">
-          <h3 className="line-clamp-2 font-sans text-base font-semibold leading-snug text-fg">
-            {project.title}
-          </h3>
-          <p className="text-xs text-muted">
-            {type.label}
-            {project.category && ' · '}
-            {project.category && <span className="text-fg/80">{project.category.name}</span>}
-          </p>
+          <span
+            className="flex size-10 items-center justify-center rounded-xl bg-surface shadow-soft transition-transform duration-200 motion-safe:group-hover:scale-105"
+            title={type.label}
+          >
+            <Icon className={cn('size-5', type.text)} aria-hidden="true" />
+          </span>
+          <StatusBadge project={project} className="bg-surface/80 backdrop-blur-sm" />
         </div>
 
-        <TagList tags={project.tags} />
+        <div className="flex flex-1 flex-col gap-3 p-4 pt-3">
+          <div className="flex flex-col gap-1.5">
+            <h3 className="line-clamp-2 font-sans text-base font-semibold leading-snug text-fg">
+              {project.title}
+            </h3>
+            <p className="text-xs text-muted">
+              {type.label}
+              {project.category && ' · '}
+              {project.category && <span className="text-fg/80">{project.category.name}</span>}
+            </p>
+          </div>
 
-        <div className="mt-auto flex items-center justify-between gap-3 border-t border-border pt-3">
-          <DueDate project={project} />
-          <ProgressRing
-            value={project.progress}
-            label={progressLabel(project)}
-            className={cn('ml-auto', type.text)}
-          />
+          <TagList tags={project.tags} />
+
+          <div className="mt-auto flex items-center justify-between gap-3 border-t border-border pt-3">
+            <DueDate project={project} />
+            <ProgressRing
+              value={project.progress}
+              label={progressLabel(project)}
+              className={cn('ml-auto', type.text)}
+            />
+          </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+      <FavoriteButton
+        type="project"
+        item={project}
+        size="sm"
+        className={cn(
+          'absolute right-2.5 top-3 bg-surface/70 backdrop-blur-sm transition-[opacity,transform] duration-200 motion-safe:group-hover/card:-translate-y-0.5',
+          // Не в избранном — на устройствах с мышью звёздочка видна при наведении или фокусе,
+          // чтобы не шуметь в сетке; на сенсорных (наведения нет) — всегда
+          !project.isFavorite &&
+            '[@media(hover:hover)]:opacity-0 [@media(hover:hover)]:focus-visible:opacity-100 [@media(hover:hover)]:group-hover/card:opacity-100',
+        )}
+      />
+    </div>
   );
 }
 

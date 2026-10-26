@@ -19,6 +19,7 @@ import { toast } from '@/lib/toast';
 import { Avatar, Button, Dropdown, LogoMark, ThemeToggle } from '@/components/ui';
 import { useAuthStore } from '@/features/auth/authStore';
 import { useLogout } from '@/features/auth/hooks/useLogout';
+import { useQuickIdea } from '@/features/notes/quickIdeaStore';
 import { useProjectModal } from '@/features/projects/projectModalStore';
 
 const themeItems = [
@@ -62,9 +63,9 @@ export function Topbar({ onMenuClick }) {
   const user = useAuthStore((s) => s.user);
   const logout = useLogout();
   const openCreateProject = useProjectModal((s) => s.openCreate);
+  const openQuickIdea = useQuickIdea((s) => s.openQuickIdea);
   const themePreference = useThemeStore((s) => s.preference);
   const setTheme = useThemeStore((s) => s.setPreference);
-  const soon = (what, stage) => () => toast.info(`${what} — этап ${stage}`);
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-bg/80 px-3 backdrop-blur-md sm:gap-3 sm:px-6 lg:px-8">
@@ -93,8 +94,15 @@ export function Topbar({ onMenuClick }) {
         }
         items={[
           { label: 'Проект', icon: FolderKanban, onSelect: openCreateProject },
-          { label: 'Задачу', icon: ListChecks, onSelect: soon('Задачи', 7) },
-          { label: 'Идею', icon: Lightbulb, shortcut: 'N', onSelect: soon('Идеи', 8) },
+          { label: 'Идею', icon: Lightbulb, shortcut: 'N', onSelect: () => openQuickIdea() },
+          {
+            label: 'Задачу',
+            icon: ListChecks,
+            onSelect: () =>
+              toast.info('Задачи добавляются на доске проекта', {
+                description: 'Откройте проект → вкладка «Доска» → «Добавить задачу».',
+              }),
+          },
         ]}
       />
 

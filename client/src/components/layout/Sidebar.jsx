@@ -4,6 +4,8 @@ import { cn } from '@/lib/cn';
 import { toast } from '@/lib/toast';
 import { Avatar, Dropdown, Logo, LogoMark } from '@/components/ui';
 import { useAuthStore } from '@/features/auth/authStore';
+import { useFavorites } from '@/features/favorites/hooks/useFavorites';
+import { PROJECT_TYPES } from '@/lib/projectTypes';
 import { useCurrentWorkspace } from '@/features/workspaces/workspaceStore';
 import { mainNav, secondaryNav } from './navigation';
 
@@ -102,6 +104,74 @@ function UserCard({ compact }) {
   );
 }
 
+const MAX_FAVORITES = 6;
+
+/**
+ * Избранные проекты (без архивных) — быстрый переход. В компактном сайдбаре (только иконки)
+ * раздел скрыт целиком: sr-only оставил бы невидимые ссылки в порядке Tab.
+ */
+function FavoriteProjects({ compact, onNavigate }) {
+  const { data } = useFavorites();
+  const projects = (data?.projects ?? []).filter((p) => !p.archivedAt);
+  const visible = projects.slice(0, MAX_FAVORITES);
+
+  return (
+    <section
+      aria-labelledby="sidebar-favorites"
+      className={cn('flex min-h-0 flex-col gap-1', compact && 'md:max-lg:hidden')}
+    >
+      <h2
+        id="sidebar-favorites"
+        className="px-2.5 font-sans text-xs font-medium uppercase tracking-wider text-muted"
+      >
+        Избранные проекты
+      </h2>
+      {visible.length === 0 ? (
+        <p className="flex items-center gap-2 px-2.5 text-xs text-muted/80">
+          <Star className="size-3.5" aria-hidden="true" />
+          Отмечайте проекты звёздочкой
+        </p>
+      ) : (
+        <ul className="flex flex-col gap-0.5">
+          {visible.map((project) => (
+            <li key={project.id}>
+              <NavLink
+                to={`/app/projects/${project.id}`}
+                onClick={onNavigate}
+                className={({ isActive }) =>
+                  cn(
+                    'focus-ring flex h-8 items-center gap-2.5 rounded-lg px-2.5 text-sm transition-colors',
+                    isActive
+                      ? 'bg-surface-2 text-fg'
+                      : 'text-muted hover:bg-surface-2/60 hover:text-fg',
+                  )
+                }
+              >
+                <span
+                  className={cn('size-2 shrink-0 rounded-full', PROJECT_TYPES[project.type].dot)}
+                  aria-hidden="true"
+                />
+                <span className="truncate">{project.title}</span>
+              </NavLink>
+            </li>
+          ))}
+          {projects.length > MAX_FAVORITES && (
+            <li>
+              <Link
+                to="/app/favorites"
+                onClick={onNavigate}
+                className="focus-ring flex h-8 items-center rounded-lg px-2.5 text-xs text-muted hover:text-fg"
+              >
+                Ещё {projects.length - MAX_FAVORITES} — всё избранное
+              </Link>
+            </li>
+          )}
+        </ul>
+      )}
+    </section>
+  );
+}
+
 export function Sidebar({ compact = true, onNavigate, className }) {
   return (
     <aside className={cn('flex h-full flex-col gap-4 bg-bg px-3 py-4', className)}>
@@ -132,15 +202,7 @@ export function Sidebar({ compact = true, onNavigate, className }) {
         ))}
       </nav>
 
-      <section className={cn('flex flex-col gap-2 px-2.5', labelClass(compact))}>
-        <h2 className="font-sans text-xs font-medium uppercase tracking-wider text-muted">
-          Избранные проекты
-        </h2>
-        <p className="flex items-center gap-2 text-xs text-muted/80">
-          <Star className="size-3.5" aria-hidden="true" />
-          Отмечайте проекты звёздочкой
-        </p>
-      </section>
+      <FavoriteProjects compact={compact} onNavigate={onNavigate} />
 
       <nav aria-label="Настройки" className="mt-auto flex flex-col gap-0.5">
         {secondaryNav.map((item) => (

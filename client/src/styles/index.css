@@ -130,6 +130,69 @@
   .dark .bg-grain::before {
     opacity: 0.08;
   }
+
+  /* Текст заметки из Markdown (MarkdownView) — только токены, обе темы */
+  .markdown {
+    @apply break-words text-sm leading-relaxed text-fg sm:text-base;
+  }
+  .markdown > * + * {
+    @apply mt-3;
+  }
+  .markdown h1 {
+    @apply font-display text-xl font-semibold;
+  }
+  .markdown h2 {
+    @apply font-display text-lg font-semibold;
+  }
+  .markdown h3,
+  .markdown h4 {
+    @apply text-base font-semibold;
+  }
+  .markdown :is(h1, h2, h3, h4) {
+    @apply mt-5 first:mt-0;
+  }
+  .markdown a {
+    @apply text-fg underline decoration-muted underline-offset-4 hover:decoration-fg;
+  }
+  .markdown ul {
+    @apply list-disc pl-6;
+  }
+  .markdown ol {
+    @apply list-decimal pl-6;
+  }
+  .markdown li + li {
+    @apply mt-1;
+  }
+  .markdown li:has(> input[type='checkbox']) {
+    @apply -ml-6 list-none;
+  }
+  .markdown input[type='checkbox'] {
+    @apply mr-2 align-middle accent-accent;
+  }
+  .markdown blockquote {
+    @apply border-l-2 border-border pl-4 text-muted;
+  }
+  .markdown code {
+    @apply rounded bg-surface-2 px-1.5 py-0.5 font-mono text-[0.875em];
+  }
+  .markdown pre {
+    @apply overflow-x-auto rounded-lg bg-surface-2 p-4;
+  }
+  .markdown pre code {
+    @apply bg-transparent p-0;
+  }
+  .markdown hr {
+    @apply border-border;
+  }
+  .markdown table {
+    @apply block overflow-x-auto text-sm;
+  }
+  .markdown :is(th, td) {
+    @apply border border-border px-3 py-1.5 text-left;
+  }
+  .markdown img {
+    @apply max-w-full rounded-lg;
+  }
 }
 
 /* Плавное появление сплэша (с задержкой — см. SplashScreen) */

@@ -36,6 +36,18 @@ function ToastItem({ toast }) {
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <p className="text-sm font-medium text-fg">{toast.title}</p>
         {toast.description && <p className="text-sm text-muted">{toast.description}</p>}
+        {toast.action && (
+          <button
+            type="button"
+            onClick={() => {
+              toast.action.onClick();
+              dismiss(toast.id);
+            }}
+            className="focus-ring mt-1 w-fit rounded text-sm font-medium text-fg underline underline-offset-4"
+          >
+            {toast.action.label}
+          </button>
+        )}
       </div>
       <button
         type="button"

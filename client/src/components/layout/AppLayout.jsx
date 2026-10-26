@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet } from 'react-router';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
+import { QuickIdeaModal } from '@/features/notes/components/QuickIdeaModal';
 import { ProjectFormModal } from '@/features/projects/components/ProjectFormModal';
 import { TaskPanel } from '@/features/tasks/components/TaskPanel';
 import { MobileDrawer, MobileTabBar } from './MobileNav';
@@ -39,6 +40,8 @@ export function AppLayout() {
       <ProjectFormModal />
       {/* Окно задачи по ?task=<id> — с любой страницы */}
       <TaskPanel />
+      {/* Быстрая идея — клавиша N или «+ Создать» */}
+      <QuickIdeaModal />
     </div>
   );
 }

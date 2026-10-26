@@ -12,14 +12,15 @@ export const useToastStore = create((set) => ({
 
 const show = (variant, title, options = {}) => {
   const id = ++nextId;
-  const { description, duration = DEFAULT_DURATION } = options;
-  useToastStore.getState().add({ id, variant, title, description, duration });
+  const { description, action, duration = DEFAULT_DURATION } = options;
+  useToastStore.getState().add({ id, variant, title, description, action, duration });
   return id;
 };
 
 /**
  * Показать уведомление из любого места (не только из компонентов):
  * toast.success('Проект создан'); toast.error('Не удалось сохранить', { description: '…' })
+ * action — кнопка в уведомлении: { label: 'Открыть', onClick }
  */
 export const toast = {
   success: (title, options) => show('success', title, options),

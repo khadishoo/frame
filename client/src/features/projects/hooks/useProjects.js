@@ -121,3 +121,18 @@ export const useRestoreProject = () => useProjectMutation((id) => projectsApi.re
 // Запись проекта в кэше не удаляем: страница проекта сразу уходит к списку,
 // а иначе успела бы перезапросить проект и мигнуть «Проект не найден»
 export const useDeleteProject = () => useProjectMutation((id) => projectsApi.deleteProject(id));
+
+/**
+ * Проекты для выпадающих списков (привязка заметки): до 100 неархивных, по названию.
+ * Ключ внутри ['projects', wsId] — обновляется вместе со списками проектов.
+ */
+export const useProjectOptions = () => {
+  const { workspaceId } = useCurrentWorkspace();
+  return useQuery({
+    queryKey: projectKeys.list(workspaceId, { options: true }),
+    queryFn: () => projectsApi.listProjects(workspaceId, { sort: 'title', limit: 100 }),
+    enabled: Boolean(workspaceId),
+    select: (data) => data.items,
+    staleTime: 60_000,
+  });
+};

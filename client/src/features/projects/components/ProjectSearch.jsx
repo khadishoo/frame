@@ -6,8 +6,15 @@ import { fieldClasses } from '@/components/ui/fieldClasses';
 /**
  * Поиск по названию: ввод сразу, запрос в адрес — через 300 мс после последней буквы.
  * value — значение из адреса, onSearch(value) — записать в адрес.
+ * label / placeholder — для других списков (например, «Идеи» ищут и по тексту).
  */
-export function ProjectSearch({ value, onSearch, className }) {
+export function ProjectSearch({
+  value,
+  onSearch,
+  label = 'Поиск по названию',
+  placeholder = 'Поиск по названию…',
+  className,
+}) {
   const [input, setInput] = useState(value);
   const [synced, setSynced] = useState(value);
 
@@ -34,8 +41,8 @@ export function ProjectSearch({ value, onSearch, className }) {
         type="search"
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        placeholder="Поиск по названию…"
-        aria-label="Поиск по названию"
+        placeholder={placeholder}
+        aria-label={label}
         maxLength={100}
         className={cn(
           fieldClasses(false),
