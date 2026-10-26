@@ -9,7 +9,6 @@ import {
   Monitor,
   Moon,
   Plus,
-  Search,
   Settings,
   Sun,
   User,
@@ -21,42 +20,13 @@ import { useAuthStore } from '@/features/auth/authStore';
 import { useLogout } from '@/features/auth/hooks/useLogout';
 import { useQuickIdea } from '@/features/notes/quickIdeaStore';
 import { useProjectModal } from '@/features/projects/projectModalStore';
+import { GlobalSearch } from '@/features/search/components/GlobalSearch';
 
 const themeItems = [
   { value: 'light', label: 'Светлая', icon: Sun },
   { value: 'dark', label: 'Тёмная', icon: Moon },
   { value: 'system', label: 'Как в системе', icon: Monitor },
 ];
-
-function SearchButton() {
-  const handleClick = () =>
-    toast.info('Поиск появится на этапе 9', { description: 'А Ctrl+K — в версии 1.3' });
-
-  return (
-    <>
-      <button
-        type="button"
-        onClick={handleClick}
-        className="focus-ring hidden h-9 w-full max-w-sm items-center gap-2 rounded-lg border border-border bg-surface px-3 text-sm text-muted shadow-soft transition-colors hover:bg-surface-2 sm:flex"
-      >
-        <Search className="size-4" aria-hidden="true" />
-        <span className="flex-1 text-left">Поиск…</span>
-        <kbd className="rounded border border-border bg-surface-2 px-1.5 font-sans text-[11px]">
-          Ctrl K
-        </kbd>
-      </button>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={handleClick}
-        aria-label="Поиск"
-        className="text-muted hover:text-fg sm:hidden"
-      >
-        <Search />
-      </Button>
-    </>
-  );
-}
 
 export function Topbar({ onMenuClick }) {
   const navigate = useNavigate();
@@ -83,7 +53,7 @@ export function Topbar({ onMenuClick }) {
       </Link>
 
       <div className="flex flex-1 justify-end sm:justify-start">
-        <SearchButton />
+        <GlobalSearch />
       </div>
 
       <Dropdown

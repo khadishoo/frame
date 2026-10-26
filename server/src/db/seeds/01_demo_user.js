@@ -196,6 +196,16 @@ const NOTES = [
   },
 ];
 
+/**
+ * Когда задача выполнена: у завершённого проекта — в день своего дедлайна (давно), у остальных —
+ * в один из последних 6 дней (×5 по модулю 6 обходит все дни), чтобы мини-график на дашборде был «живым», а не одним столбиком.
+ */
+let doneCounter = 0;
+const completedAt = (trx, project, due) => {
+  const daysAgo = project.status === 'completed' && due !== null ? -due : (doneCounter++ * 5) % 6;
+  return trx.raw(`now() - interval '${daysAgo} days' - interval '${(doneCounter % 5) + 1} hours'`);
+};
+
 // Избранное демо-пользователя
 const FAVORITE_PROJECTS = ['Альбом «Северное сияние»', 'Сайт-портфолио'];
 const FAVORITE_NOTES = ['Комикс про кота-почтальона'];
@@ -281,7 +291,7 @@ export async function seed(knex) {
           priority,
           due_date: due === null ? null : day(due),
           position: nextPosition[status],
-          completed_at: status === 'done' ? trx.fn.now() : null,
+          completed_at: status === 'done' ? completedAt(trx, p, due) : null,
         };
       });
       if (tasks.length > 0) await trx('tasks').insert(tasks);

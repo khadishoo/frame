@@ -10,6 +10,9 @@ window.matchMedia ??= (query) => ({
   removeEventListener: () => {},
 });
 
+// В jsdom нет scrollIntoView (в браузерах есть всегда) — заглушка для списков со стрелками
+Element.prototype.scrollIntoView ??= () => {};
+
 afterEach(() => {
   cleanup();
 });
